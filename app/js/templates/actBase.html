@@ -1,0 +1,19 @@
+<div class="activity"
+     ng-mousedown="select($event)"
+     ng-class="{ selected: isSelected() }"
+     context-menu="select($event)"
+     data-target="ActivityContextMenu">
+
+    <div class="header"
+
+         ng-class="{ selected: isSelected() }">
+
+        <span>{{ actBase.displayName  || "&nbsp" }}</span>
+
+        <span></span>
+
+    </div>
+
+    <div ng-transclude></div>
+
+</div>

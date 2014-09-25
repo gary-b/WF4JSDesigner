@@ -1,0 +1,32 @@
+<table class="pad">
+    <thead>
+        <tr>
+            <th>Name</th><th>Type</th><th>Scope</th><th>Default Value</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="variable in variables">
+            <td>
+                <input type="text" ng-model="variable.name">
+            </td>
+            <td>
+                <select ng-model="variable.type"
+                        ng-options="type for type in getAvailableTypes()"></select>
+            </td>
+            <td>
+                <select ng-change="changeScope(variable)"
+                        ng-model="variable.newScope"
+                        ng-options="part as part.displayName for part in partsForVars"></select>
+            </td>
+            <td>
+                <input type="text" ng-model="variable.defaultValue">
+            </td>
+            <td class="delete-row">
+                <button type="button" ng-click="deleteVariable(variable)">X</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="NewBar" ng-click="newVariable()">
+
+</div>

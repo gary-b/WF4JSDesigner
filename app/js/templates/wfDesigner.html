@@ -1,0 +1,31 @@
+<div id="ToolboxCol">
+
+    <div wf-toolbox></div>
+
+</div>
+
+<div id="DesignSurfaceCol">
+
+    <div wf-design-surface="wfDesigner"></div>
+
+</div>
+
+<div id="ButtonBar">
+
+    <a class="toggle"
+       ng-click="toggleBottomPad('#wfVariables', $event)">Variables</a>
+    <a class="toggle"
+       ng-click="toggleBottomPad('#wfArguments', $event)">Arguments</a>
+</div>
+
+<div id="wfPropertyGrid" wf-property-grid></div>
+
+<div wf-variables id="wfVariables" class="bottom-pad" style="display:none"></div>
+
+<div wf-arguments id="wfArguments" class="bottom-pad" style="display:none"></div>
+
+<div id="ActivityContextMenu" class="context-menu position-fixed hide">
+    <ul>
+        <li><a href ng-click="deleteSelected()">Delete</a></li>
+    </ul>
+</div>
