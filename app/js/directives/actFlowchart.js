@@ -7,19 +7,27 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
         scope: {
             actFlowchart: '='
         },
+        controller: function($scope){
+            //controller required as a means to share flowchartInstance with nested directives
+            //flowchartInstance is set in the link function for now
+        },
         link: function (scope, element, attrs, cntrl) {
+
+            //storing the flowchartPlumb instance on the controller so nested directives can access it
+            cntrl.flowchartInstance = flowchartPlumb.createFlowchart();
+
             scope.expanded = false;
             scope.expand = function() {
                 scope.expanded = true;
                 //wait for dom, initialize jsPlumb and create endpoint on start-node
-                flowchartPlumb.initFlowchart(element, scope.actFlowchart, 'ConnectionsContextMenu');
-            },
-                scope.collapse = function() {
-                    scope.expanded = false;
-                    alert('not implemented - handle jsplumb stuff');
-                };
+                cntrl.flowchartInstance.initFlowchart(element, scope.actFlowchart, 'ConnectionsContextMenu');
+            };
+            scope.collapse = function() {
+                scope.expanded = false;
+                alert('not implemented - handle jsplumb stuff');
+            };
             scope.deleteConnection = function() {
-                flowchartPlumb.deleteConnection();
+                cntrl.flowchartInstance.deleteConnection();
             };
             scope.mouseDown = function(event) {
                 event.stopPropagation();
@@ -44,7 +52,7 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                             scope.flowSwitchDropRelPos = relPos;
                             scope.showFlowSwitchPopup = true;
                         } else {
-                            flowchartPlumb.insertPartToWfModel(category, type, relPos);
+                            cntrl.flowchartInstance.insertPartToWfModel(category, type, relPos);
                         }
                     });
                 }
@@ -57,7 +65,7 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                     t: genericParamT
                 };
                 scope.showFlowSwitchPopup = false;
-                flowchartPlumb.insertPartToWfModel('flow-node-tool', 'FlowSwitch', scope.flowSwitchDropRelPos, genericParams);
+                cntrl.flowchartInstance.insertPartToWfModel('flow-node-tool', 'FlowSwitch', scope.flowSwitchDropRelPos, genericParams);
             };
             scope.cancelCreateFlowSwitch = function() {
                 scope.showFlowSwitchPopup = false;
@@ -65,7 +73,7 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
             };
             scope.$watchCollection('actFlowchart.nodes', function (newNodes, oldNodes) {
                 if (newNodes != null && oldNodes != null) {
-                    flowchartPlumb.checkForAndHandleRemovedNodes(newNodes);
+                    cntrl.flowchartInstance.checkForAndHandleRemovedNodes(newNodes);
                 }
             });
         }

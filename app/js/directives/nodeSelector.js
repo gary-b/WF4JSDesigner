@@ -1,10 +1,11 @@
 'use strict';
 
-app.directive('nodeSelector', function ($compile, wfPartDefs, flowchartPlumb) {
+app.directive('nodeSelector', function ($compile, wfPartDefs) {
     return {
         restrict: 'A',
+        require: '^actFlowchart',
         scope: false,
-        link: function(scope, element, attrs, ctrl) {
+        link: function(scope, element, attrs, cntrl) {
             var node = scope.$eval(attrs.nodeSelector);
             if (node != null) {
                 //get the appropriate directive
@@ -12,13 +13,13 @@ app.directive('nodeSelector', function ($compile, wfPartDefs, flowchartPlumb) {
                 switch(node.type) {
                     case 'FlowStep':
                         //flowSteps dont have their own directive, the directive for the activity
-                        //assigned to their action property is added tot he flowchart directly
+                        //assigned to their action property is added to the flowchart directly
                         //This also means we have to call the initialisation code (flowchartPlumb.initFlowStep)
                         //directly.
                         var activity = node.action;
                         dir = wfPartDefs.getDirective(activity.type);
                         element.attr(dir, attrs.nodeSelector + '.action');//FIXME: very hacky
-                        flowchartPlumb.initFlowStep(element, node);
+                        cntrl.flowchartInstance.initFlowStep(element, node);
                         break;
                     case 'FlowDecision':
                     case 'FlowSwitch':
