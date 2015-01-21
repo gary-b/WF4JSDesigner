@@ -41,11 +41,11 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                 drop: function (event, ui) {
                     var type = ui.draggable.attr('data-type');
                     var category = ui.draggable.attr('data-category');
+                    //convert screen coordinates to coordinates relative to top left of flowchart
+                    var elementBounds = element.get()[0].getBoundingClientRect();
                     var relPos = {
-                        //distance flowchart is left and 100px for toolbox width
-                        left: ui.position.left - element.prop('offsetLeft') - 100,
-                        //distance flowchart is from top
-                        top: ui.position.top - element.prop('offsetTop')
+                        left: ui.position.left - elementBounds.left,
+                        top: ui.position.top - elementBounds.top
                     };
                     scope.$apply(function() {
                         if (category == 'flow-node-tool' && type == 'FlowSwitch') {

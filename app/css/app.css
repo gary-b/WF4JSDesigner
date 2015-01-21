@@ -167,9 +167,11 @@ div.arrow-down {
     overflow-y: scroll;
 }
 #wfDesigner {
-    position: relative;
-    height: 800px;
-    width: 1024px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     border: dotted;
     border-width: thin;
 }
@@ -265,10 +267,10 @@ div.arrow-down {
     font-style: italic;
 }
 .flowchart .drop-zone {
-    position:relative;
-    height:500px;
-    width:500px;
-    overflow:scroll;
+    position: relative;
+    height: 800px;
+    width: 800px;
+    overflow: scroll;
 }
 .flow-node {
     border: 1px solid darkgray;
