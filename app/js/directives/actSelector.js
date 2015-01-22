@@ -12,12 +12,17 @@ app.directive('actSelector', function($compile, wfPartDefs) {
          Now that we are using scope.$eval everywhere im not so sure that was a good decision
          */
         link: function(scope, element, attrs, ctrl) {
+            var lastDirective;
             function selectDirective(activity) {
-                var dir = wfPartDefs.getDirective(activity.type);
-                element.attr(dir, attrs.actSelector);
+                if (lastDirective != null) {
+                    element.removeAttr(lastDirective);
+                }
+                var newDirective = wfPartDefs.getDirective(activity.type);
+                element.attr(newDirective, attrs.actSelector);
                 element.removeAttr('act-selector');
                 element.removeAttr('ng-repeat');
                 $compile(element)(scope);
+                lastDirective = newDirective;
             }
 
             var activity = scope.$eval(attrs.actSelector);
@@ -29,7 +34,8 @@ app.directive('actSelector', function($compile, wfPartDefs) {
                 scope.$watch(function() {
                     return scope.$eval(attrs.actSelector);
                 }, function(newVal, oldVal) {
-                    if (!(newVal === undefined && oldVal === undefined )) {
+
+                    if (newVal != null) {
                         selectDirective(newVal);
                     }
                 });

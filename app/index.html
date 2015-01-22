@@ -7,9 +7,11 @@
 </head>
 <body>
 
-    <div ng-controller="wf" style="text-align:center">
-      <div id="wfDesigner" wf-designer="data.sequence" arguments="data.arguments">
-      </div>
+    <div ng-controller="wf">
+        <h1>Workflow Designer</h1> <button ng-click="loadExample()">Load example workflow.</button>
+
+        <div id="wfDesigner" wf-designer="data.workflow" arguments="data.arguments">
+        </div>
      </div>
 
     <!-- In production use:

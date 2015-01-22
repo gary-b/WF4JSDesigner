@@ -5,16 +5,10 @@ app.directive('wfArguments', function(environment, wfModel) {
         restrict: 'A',
         templateUrl: './js/templates/wfArguments.html',
         scope: {
+            arguments:"=wfArguments"
         },
         link: function (scope, element, attrs, ctrl) {
-            scope.$watch(function() {
-                return wfModel.arguments;
-            }, function (newVal, oldVal) {
-                if (newVal == null) {
-                    throw "arguments on model are null";
-                }
-                scope.arguments = newVal;
-            });
+
             scope.availableTypes = environment.types;
 
             scope.directions = [ 'In', 'Out', 'InOut', 'Property' ];

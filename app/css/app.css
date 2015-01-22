@@ -1,4 +1,33 @@
 /* app css stylesheet */
+/* General Styling */
+
+h1 {
+    font-size: 1.3em;
+    line-height: 1.5em;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: inline-block;
+}
+
+button {
+    display: inline-block;
+}
+
+#wfDesigner {
+    position: absolute;
+    top: 3em;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: dotted;
+    border-width: thin;
+}
+/* Component styling*/
+#wfDesigner {
+    text-align: center;
+}
 .activity {
     border: 1px solid darkgray;
     display: inline-block;
@@ -165,15 +194,6 @@ div.arrow-down {
     right: 0px;
     bottom: 15px;
     overflow-y: scroll;
-}
-#wfDesigner {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border: dotted;
-    border-width: thin;
 }
 #ButtonBar {
     position: absolute;

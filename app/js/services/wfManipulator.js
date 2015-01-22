@@ -7,8 +7,7 @@ app.factory('wfManipulator', function () {
         },
         deleteWfPart: function(part) {
             if (part.parent == null) {
-                var err = "parent of part null or undefined, support to delete root part not implemented yet";
-                alert(err);
+                var err = "parent of part null or undefined, cant be deleted through wfManipulator.deleteWfPart";
                 throw err;
             }
             part.parent.deleteChild(part);

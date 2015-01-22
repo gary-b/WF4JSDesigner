@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfDesigner', function(wfModel, wfManipulator, designerUI) {
+app.directive('wfDesigner', function(wfManipulator, designerUI) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfDesigner.html',
@@ -10,18 +10,17 @@ app.directive('wfDesigner', function(wfModel, wfManipulator, designerUI) {
         },
         link: function(scope, element, attrs, ctrl) {
             //not watching for argument changes when model isnt changed
-            scope.$watch('wfDesigner', function(newVal, oldVal) {
-                if (!(newVal === undefined && oldVal === undefined )) {
-                    wfModel.initialize(scope.wfDesigner, scope.arguments);
-                }
-            });
+
             scope.deleteSelected = function() {
-                if (designerUI.selectedItem.modelType === 'wfPart') {
-                    wfManipulator.deleteWfPart(designerUI.selectedItem);
-                    designerUI.selectedItem = null;
-                } else {
+                if (designerUI.selectedItem.modelType != 'wfPart') {
                     alert('deleting this modelType is not implemented in wfDesigner');
                 }
+                if (designerUI.selectedItem === scope.wfDesigner) {
+                    scope.wfDesigner = null;
+                } else {
+                    wfManipulator.deleteWfPart(designerUI.selectedItem);
+                }
+                designerUI.selectedItem = null;
             };
             // ############  Bottom Pad ###############
             var unRegWatch;
