@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actSelector', function($compile, wfPartDefs) {
+app.directive('actSelector', function($compile, wfPartDefs, ContextMenuService) {
     return {
         restrict: 'A',
         scope:false,
@@ -13,15 +13,24 @@ app.directive('actSelector', function($compile, wfPartDefs) {
          */
         link: function(scope, element, attrs, ctrl) {
             var lastDirective;
-            function selectDirective(activity) {
+            var lastScope;
+            function destroyLastDirective(){
                 if (lastDirective != null) {
+                    ContextMenuService.closeFlag = true;
                     element.removeAttr(lastDirective);
+                    lastScope.$destroy();
                 }
+                lastDirective = null;
+                lastScope = null;
+            }
+            function selectDirective(activity) {
+                destroyLastDirective();
                 var newDirective = wfPartDefs.getDirective(activity.type);
                 element.attr(newDirective, attrs.actSelector);
                 element.removeAttr('act-selector');
                 element.removeAttr('ng-repeat');
-                $compile(element)(scope);
+                lastScope = scope.$new();
+                $compile(element)(lastScope);
                 lastDirective = newDirective;
             }
 
@@ -40,6 +49,9 @@ app.directive('actSelector', function($compile, wfPartDefs) {
                     }
                 });
             }
+            scope.$on('nearestActSelectorDestroyDirective', function(event, args) {
+                destroyLastDirective();
+            });
         }
     };
 });

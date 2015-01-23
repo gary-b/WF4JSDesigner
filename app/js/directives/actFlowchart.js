@@ -76,6 +76,9 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                     cntrl.flowchartInstance.checkForAndHandleRemovedNodes(newNodes);
                 }
             });
+            scope.$on('$destroy', function() {
+                element.droppable('disable');alert('bye');
+            });
         }
     };
 });

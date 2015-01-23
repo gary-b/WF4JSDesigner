@@ -6,6 +6,13 @@ app.directive('wfDesignSurface', function() {
         templateUrl: './js/templates/wfDesignSurface.html',
         scope: {
             wfDesignSurface: '='
+        },
+        link: function(scope, element, attrs, ctrl) {
+            scope.$watch('wfDesignSurface', function(newVal, oldVal) {
+               if (newVal == null) {
+                   scope.$broadcast('nearestActSelectorDestroyDirective');
+               }
+            });
         }
     };
 });
