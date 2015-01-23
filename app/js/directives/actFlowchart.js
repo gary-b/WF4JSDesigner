@@ -36,13 +36,13 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
             scope.availableTypes = environment.types;
 
             //jquery droppable - handling drops from toolbox
-            element.find('div').droppable({
+            element.droppable({
                 accept: '.activity-tool, .flow-node-tool',
                 drop: function (event, ui) {
                     var type = ui.draggable.attr('data-type');
                     var category = ui.draggable.attr('data-category');
                     //convert screen coordinates to coordinates relative to top left of flowchart
-                    var elementBounds = element.get()[0].getBoundingClientRect();
+                    var elementBounds = element.find('.drop-zone').get()[0].getBoundingClientRect();
                     var relPos = {
                         left: ui.position.left - elementBounds.left,
                         top: ui.position.top - elementBounds.top
