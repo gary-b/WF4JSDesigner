@@ -1,4 +1,4 @@
-<div act-base="actFlowchart" class="flowchart">
+<div act-base="actFlowchart" expander="true" expander-fn="expander" class="flowchart">
 
     <div ng-if="expanded" class="drop-zone">
 
@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <div ng-if="!expanded" ng-dblclick="expand()" class="collapsed">
+    <div ng-if="!expanded" ng-dblclick="expander()" class="collapsed">
 
         Double click to expand
 

@@ -17,14 +17,12 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
             cntrl.flowchartInstance = flowchartPlumb.createFlowchart();
 
             scope.expanded = false;
-            scope.expand = function() {
-                scope.expanded = true;
+            scope.expander = function() {
+                scope.expanded = !scope.expanded;
                 //wait for dom, initialize jsPlumb and create endpoint on start-node
-                cntrl.flowchartInstance.initFlowchart(element, scope.actFlowchart, 'ConnectionsContextMenu');
-            };
-            scope.collapse = function() {
-                scope.expanded = false;
-                alert('not implemented - handle jsplumb stuff');
+                if (scope.expanded) {
+                    cntrl.flowchartInstance.initFlowchart(element, scope.actFlowchart, 'ConnectionsContextMenu');
+                }
             };
             scope.deleteConnection = function() {
                 cntrl.flowchartInstance.deleteConnection();
@@ -77,7 +75,7 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                 }
             });
             scope.$on('$destroy', function() {
-                element.droppable('disable');alert('bye');
+                element.droppable('disable');
             });
         }
     };

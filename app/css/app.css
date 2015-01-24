@@ -29,6 +29,7 @@ button {
     text-align: center;
 }
 .activity {
+    position: relative;
     border: 1px solid darkgray;
     display: inline-block;
     min-width: 220px;
@@ -45,6 +46,10 @@ button {
     border-bottom: 1px solid darkgray;
     width:99%;
     background-color: lightgray;
+}
+.activity .header #rightIcon {
+    position: absolute;
+    right: 0.2em;
 }
 .single-line-input {
     width: 100%;

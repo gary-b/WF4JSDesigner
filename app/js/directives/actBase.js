@@ -6,7 +6,9 @@ app.directive('actBase', function(designerUI) {
         transclude: true,
         templateUrl: './js/templates/actBase.html',
         scope: {
-            actBase: '='
+            actBase: '=',
+            expander: '=',
+            expanderFn: '='
         },
         link: function(scope, element, attrs, cntrl){
             //FIXME: use controller, share with flowNode

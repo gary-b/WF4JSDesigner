@@ -5,12 +5,14 @@
      data-target="ActivityContextMenu">
 
     <div class="header"
-
          ng-class="{ selected: isSelected() }">
 
         <span>{{ actBase.displayName  || "&nbsp" }}</span>
 
-        <span></span>
+        <span id="rightIcon">
+            <i ng-class="{ 'fa fa-expand': expander }"
+               ng-click="expanderFn()"></i>
+        </span>
 
     </div>
 
