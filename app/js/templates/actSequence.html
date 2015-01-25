@@ -1,6 +1,6 @@
 <div act-base="actSequence">
 
-    <div class="sequence-body">
+    <div ng-if="!cantExpand" class="sequence-body">
 
         <div act-drop-zone="actSequence.activities"
              parent="actSequence"
@@ -15,6 +15,12 @@
                  index="$index"></div>
 
         </div>
+
+    </div>
+
+    <div ng-if="cantExpand" class="collapsed" ng-dblclick="maximizer()">
+
+        Double click to maximize
 
     </div>
 

@@ -1,7 +1,21 @@
-<div>
+<div id="Breadcrumbs">
 
-    <div ng-show="wfDesignSurface != null" act-selector="wfDesignSurface" changeable="true"></div>
+    <span ng-repeat="wfPart in path">
+        <a href ng-click="display(wfPart)">{{ wfPart.displayName }}</a>&nbsp
+        <i ng-if="!$last" class="fa fa-chevron-right two-thirds-text"></i>&nbsp
+    </span>
 
-    <div ng-show="wfDesignSurface == null" act-drop-zone="wfDesignSurface" parent="null"></div>
+</div>
+
+<div id="DesignSurfaceCol">
+
+    <div ng-show="wfDesignSurface != null"
+         act-selector="displayWfPart"
+         changeable="true"
+         must-expand="true"></div>
+
+    <div ng-show="wfDesignSurface == null"
+         act-drop-zone="wfDesignSurface"
+         parent="null"></div>
 
 </div>

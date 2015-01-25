@@ -10,8 +10,9 @@
         <span>{{ actBase.displayName  || "&nbsp" }}</span>
 
         <span id="rightIcon">
-            <i ng-class="{ 'fa fa-expand': expander }"
-               ng-click="expanderFn()"></i>
+            <i ng-if="expander != null"
+               class="fa fa-expand two-thirds-text"
+               ng-click="expander()"></i>
         </span>
 
     </div>

@@ -104,6 +104,12 @@ div.arrow-down {
     border-bottom:solid 1px  #eaeaea;
     border-right: solid 1px #eaeaea;
 }
+.two-thirds-text {
+    font-size: 0.66em;
+}
+
+/* #############    Context Menu   ########## */
+
 .context-menu {
     position: fixed;
 }
@@ -194,11 +200,21 @@ div.arrow-down {
 }
 #DesignSurfaceCol {
     position: absolute;
-    top: 0px;
+    top: 1.2em;
     left: 110px;
     right: 0px;
     bottom: 15px;
     overflow-y: scroll;
+}
+#Breadcrumbs {
+    text-align: left;
+    position: absolute;
+    top: 0;
+    right: 258.5px;
+    left: 110px;
+    height: 1.2em;
+    border-bottom-style: dotted;
+    border-width:thin;
 }
 #ButtonBar {
     position: absolute;
@@ -212,12 +228,12 @@ div.arrow-down {
 }
 #wfPropertyGrid {
     position: absolute;
-    top: 0px;
+    top: 0;
     /*bottom: 0px;*/
     right: 22.5px;
     width: 250px;
+    background-color: #ffffff;
     border-left-style: dotted;
-    border-top-style: none;
     border-bottom-style: dotted;
     border-right-style: dotted;
     border-width:thin;
@@ -241,6 +257,7 @@ div.arrow-down {
     text-align: center;
     border-bottom-style: dotted;
     border-bottom-width: thin;
+    height: 1.2em;
 }
 .tool {
     cursor:move;

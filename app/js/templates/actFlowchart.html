@@ -1,4 +1,4 @@
-<div act-base="actFlowchart" expander="true" expander-fn="expander" class="flowchart">
+<div act-base="actFlowchart" expander="expander" class="flowchart" ng-dblclick="maximizer()">
 
     <div ng-if="expanded" class="drop-zone">
 
@@ -8,7 +8,8 @@
         </div>
 
         <div ng-repeat="node in actFlowchart.nodes"
-             node-selector="node"></div>
+             node-selector="node"
+             cant-expand="true"></div>
         <div id="ConnectionsContextMenu" class="context-menu position-fixed hide">
             <ul>
                 <li><a href ng-mousedown="mouseDown($event)" ng-click="deleteConnection()">Delete</a></li>
@@ -36,12 +37,13 @@
                 </div>
             </div>
         </div>
+        <div flow-switch-case-popup></div>
     </div>
 
-    <div ng-if="!expanded" ng-dblclick="expander()" class="collapsed">
+    <div ng-if="!expanded" class="collapsed">
 
-        Double click to expand
+        Double click to maximize
 
     </div>
-    <div flow-switch-case-popup></div>
+
 </div>

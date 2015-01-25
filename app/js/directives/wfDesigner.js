@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfDesigner', function(wfManipulator, designerUI) {
+app.directive('wfDesigner', function(wfManipulator, designerUI, $rootScope) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfDesigner.html',
@@ -9,17 +9,18 @@ app.directive('wfDesigner', function(wfManipulator, designerUI) {
             arguments: '='
         },
         link: function(scope, element, attrs, ctrl) {
-            //not watching for argument changes when model isnt changed
 
             scope.deleteSelected = function() {
                 if (designerUI.selectedItem.modelType != 'wfPart') {
                     alert('deleting this modelType is not implemented in wfDesigner');
                 }
-                if (designerUI.selectedItem === scope.wfDesigner) {
+                if (designerUI.selectedItem === scope.wfDesigner) { //root of workflow
                     scope.wfDesigner = null;
+                    scope.arguments = null;
                 } else {
                     wfManipulator.deleteWfPart(designerUI.selectedItem);
                 }
+                $rootScope.$emit('wfPartDeleted', designerUI.selectedItem);
                 designerUI.selectedItem = null;
             };
             // ############  Bottom Pad ###############
