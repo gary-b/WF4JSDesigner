@@ -47,9 +47,11 @@ button {
     width:99%;
     background-color: lightgray;
 }
-.activity .header #rightIcon {
+.right-icon {
     position: absolute;
+    top: 0.2em;
     right: 0.2em;
+    font-size: 0.8em;
 }
 .single-line-input {
     width: 100%;
@@ -104,10 +106,9 @@ div.arrow-down {
     border-bottom:solid 1px  #eaeaea;
     border-right: solid 1px #eaeaea;
 }
-.two-thirds-text {
-    font-size: 0.66em;
+#Breadcrumbs i {
+    font-size: 0.66em !important;
 }
-
 /* #############    Context Menu   ########## */
 
 .context-menu {
@@ -203,7 +204,7 @@ div.arrow-down {
     top: 1.2em;
     left: 110px;
     right: 0px;
-    bottom: 15px;
+    bottom: 1.5em;
     overflow-y: scroll;
 }
 #Breadcrumbs {

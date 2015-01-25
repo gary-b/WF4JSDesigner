@@ -7,6 +7,7 @@ app.directive('wfPropertyGrid', function ($compile, designerUI, wfPartDefs, flow
         scope: {},
         link: function (scope, element, attrs, ctrl) {
             var target = $('#PropList');
+            scope.expanded = true;
             function selectDirective(item) {
                 target.html(null);
                 if (item == null) {
@@ -37,6 +38,9 @@ app.directive('wfPropertyGrid', function ($compile, designerUI, wfPartDefs, flow
                     selectDirective(newVal);
                 }
             });
+            scope.expander = function() {
+                scope.expanded = !scope.expanded;
+            }
         }
     }
 });

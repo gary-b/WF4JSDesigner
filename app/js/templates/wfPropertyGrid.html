@@ -2,8 +2,15 @@
 
     PROPERTIES
 
+    <span class="right-icon">
+        <i class="fa fa-expand two-thirds-text"
+           ng-click="expander()"></i>
+    </span>
+
 </div>
 
-<div id="PropList">
+<div ng-show="expanded" id="PropList">
+
     (No item selected)
+
 </div>
