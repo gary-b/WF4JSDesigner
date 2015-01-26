@@ -35,7 +35,14 @@ app.value('jsPlumb', jsPlumb)
                     unRegBoundLabels: [],  // FIXME: look at when unregistering jsPlumb stuff
                     connectionsMenu: null, //context menu for connections
                     flowSwitchCasePopup: null, //a directive watches this property and shows popup to user when not null capturing caseValue
-                    //It immediately sets it null afterward
+                                               //It immediately sets it null afterward
+                    endpoints: {},
+                    endpointAdded: function(nodeId, position, endpoint) {
+                        if (this.endpoints[nodeId] == null) {
+                            this.endpoints[nodeId] = {};
+                        }
+                        this.endpoints[nodeId][position] = endpoint;
+                    },
                     bindLabel: function(tiedObject, label, labelFn) {
                         var unReg = {
                             tiedObject: tiedObject,
@@ -77,25 +84,28 @@ app.value('jsPlumb', jsPlumb)
                                     return ifnull;
                                 return value;
                             }
-                            function connectionAdded(elSource, elTarget, connection, sourceEndpoint) {
+                            function connectionAdded(elSource, elTarget, connection, sourceEndpoint, targetEndpoint) {
                                 var sourcePart = $(elSource).data('flowchartPart');
                                 var targetPart = $(elTarget).data('flowchartPart');
+                                var sourcePos = sourceEndpoint.getParameter('position');
+                                var targetPos = targetEndpoint.getParameter('position');
 
-                                if (sourcePart.type === 'FlowDecision' && sourcePart.modelType === 'wfPart') {
+                                if (sourcePart.type === 'FlowDecision') {
                                     // sourceInfo is an object that was added to each flowDecision source endpoint.
                                     // It lets us identify whether the connection is from the true or false endpoint.
                                     // Since user can change the display name from True False to something else
                                     // the sourceInfo object also contains a Fn to retrieve the relevant label.
                                     // We use this to bind the label value to a label overlay displayed on the connection.
                                     var sourceInfo = sourceEndpoint.getParameter('sourceInfo');
-                                    sourcePart.connectNode(targetPart.nodeId, sourceInfo);
+                                    sourcePart.connectNode(targetPart.nodeId, sourceInfo, sourcePos, targetPos);
                                     connection.addOverlay([ 'Label', {
                                         label: sourceInfo.labelFn(),
                                         id:'label'
                                     } ]);
+                                    connection.setParameter('name', sourceInfo.name);
                                     var label = connection.getOverlay('label');
                                     self.bindLabel(connection, label, sourceInfo.labelFn);
-                                } else if (sourcePart.type === 'FlowSwitch' && sourcePart.modelType === 'wfPart') {
+                                } else if (sourcePart.type === 'FlowSwitch') {
                                     // Here we must retrieve a new case object from the FlowSwitch, then pass this
                                     // back to the flowswitch when we call connectNode. We need the case object so
                                     // we can:
@@ -109,7 +119,7 @@ app.value('jsPlumb', jsPlumb)
                                     var sourceInfo = {
                                         case: sourcePart.createCase()
                                     };
-                                    sourcePart.connectNode(targetPart.nodeId, sourceInfo);
+                                    sourcePart.connectNode(targetPart.nodeId, sourceInfo, sourcePos, targetPos);
                                     //retVal will be a case object
                                     var labelFn = function() {
                                         return (sourceInfo.case.default.case === sourceInfo.case) ?
@@ -124,91 +134,123 @@ app.value('jsPlumb', jsPlumb)
                                     var label = connection.getOverlay('label');
                                     self.bindLabel(connection, label, labelFn);
                                     self.showFlowSwitchCasePopup(sourceInfo.case, connection);
+                                } else if (sourcePart.type === 'Flowchart' || sourcePart.type === 'FlowStep') {
+                                    sourcePart.connectNode(targetPart.nodeId, null, sourcePos, targetPos);
                                 }
                                 //parameters copied from sourceEndpoint to connection by default - dont need this
                                 connection.setParameter('sourceInfo', undefined);
                             }
                             function connectionRemoved(elSource, elTarget, connection) {
+                                //this method is also called when a connection is being moved
                                 var sourcePart = $(elSource).data('flowchartPart');
                                 var targetPart = $(elTarget).data('flowchartPart');
-                                sourcePart.disconnectNode(targetPart.nodeId);
+                                var info = null;
+                                if (sourcePart.type === 'FlowDecision'){
+                                    info = { name: connection.getParameter('name') };
+                                    connection.setParameter('name', undefined);
+                                } else if (sourcePart.type === 'FlowSwitch') {
+                                    info = { 'case': connection.getParameter('case') };
+                                    connection.setParameter('case', undefined);
+                                }
+                                connection.removeOverlay('label');
+                                sourcePart.disconnectNode(info);
                                 self.unBindLabels(connection);
-                                connection.setParameter('case', undefined);
                             }
                             $(element).find('.start-node').data('flowchartPart', self.flowchart);
                             self.jsPlumbInstance = jsPlumb.getInstance();
                             self.jsPlumbInstance.setContainer($(element).find('.drop-zone'));
-                            self.jsPlumbInstance.addEndpoint($(element).find('.start-node'), {
+                            self.endpointAdded("FlowChart", "bottom", self.jsPlumbInstance.addEndpoint($(element).find('.start-node'), {
                                 anchor: [0.5, 1, 0, 1, 0, 4],
-                                isSource: true
-                            }, self.connectorParams);
-
-                            self.jsPlumbInstance.bind("connection", function (info, originalEvent) {
-                                //fires when connection moved as well as for new connections
-                                connectionAdded(info.source, info.target, info.connection, info.sourceEndpoint);
-
-                                //info param properties:
-                                //connection - the new Connection. you can register listeners on this etc.
-                                //sourceId - id of the source element in the Connection
-                                //targetId - id of the target element in the Connection
-                                //source - the source element in the Connection
-                                //target - the target element in the Connection
-                                //sourceEndpoint - the source Endpoint in the Connection
-                                //targetEndpoint - the targetEndpoint in the Connection
-                                if (originalEvent != null) {
-                                    originalEvent.preventDefault();
-                                    originalEvent.stopPropagation();
+                                isSource: true,
+                                parameters: {
+                                    position: 'bottom'
                                 }
-                            });
-                            self.jsPlumbInstance.bind("connectionDetached", function (info, originalEvent) {
-                                //Does not fire for the old element when connection moved between elements
-                                if (info.connection.pending === false) {
-                                    connectionRemoved(info.source, info.target, info.connection);
-                                    if (designerUI.selectedItem != null) {
-                                        if (designerUI.selectedItem.modelType === 'flowchartPlumbConnection') {
-                                            //sometimes this event is raised through a programmatic call to remove connection
-                                            //thus it is already within a digest cycle
-                                            if (originalEvent == null) {
-                                                designerUI.selectedItem = flowchartModel;
-                                            } else {
-                                                $rootScope.$apply(function () {
+                            }, self.connectorParams));
+
+                            //create connections once jsPlumb has created endpoints
+                            setTimeout(function() {
+                                if (flowchartModel.startNode != null) {
+                                    var con = flowchartModel.connections[0];
+                                    self.jsPlumbInstance.connect({
+                                        source: self.endpoints["FlowChart"][con.sourcePos],
+                                        target: self.endpoints[con.targetNodeId][con.targetPos]
+                                    });
+                                }
+                                angular.forEach(flowchartModel.nodes, function (node) {
+                                    angular.forEach(node.connections, function(con) {
+                                        self.jsPlumbInstance.connect({
+                                            source: self.endpoints[node.nodeId][con.sourcePos],
+                                            target: self.endpoints[con.targetNodeId][con.targetPos]
+                                        });
+                                    });
+                                });
+                                self.jsPlumbInstance.bind("connection", function (info, originalEvent) {
+                                    //fires when connection moved as well as for new connections
+                                    connectionAdded(info.source, info.target, info.connection, info.sourceEndpoint, info.targetEndpoint);
+
+                                    //info param properties:
+                                    //connection - the new Connection. you can register listeners on this etc.
+                                    //sourceId - id of the source element in the Connection
+                                    //targetId - id of the target element in the Connection
+                                    //source - the source element in the Connection
+                                    //target - the target element in the Connection
+                                    //sourceEndpoint - the source Endpoint in the Connection
+                                    //targetEndpoint - the targetEndpoint in the Connection
+                                    if (originalEvent != null) {
+                                        originalEvent.preventDefault();
+                                        originalEvent.stopPropagation();
+                                    }
+                                });
+                                self.jsPlumbInstance.bind("connectionDetached", function (info, originalEvent) {
+                                    //Does not fire for the old element when connection moved between elements
+                                    if (info.connection.pending !== true) {
+                                        connectionRemoved(info.source, info.target, info.connection);
+                                        if (designerUI.selectedItem != null) {
+                                            if (designerUI.selectedItem.modelType === 'flowchartPlumbConnection') {
+                                                //sometimes this event is raised through a programmatic call to remove connection
+                                                //thus it is already within a digest cycle
+                                                if (originalEvent == null) {
                                                     designerUI.selectedItem = flowchartModel;
-                                                });
+                                                } else {
+                                                    $rootScope.$apply(function () {
+                                                        designerUI.selectedItem = flowchartModel;
+                                                    });
+                                                }
                                             }
                                         }
                                     }
-                                }
-                            });
-                            self.jsPlumbInstance.bind("connectionMoved", function (info, originalEvent) {
-                                //fires when connection moved from 1 element to another
-                                //does not provide source and target properties like connection event
-                                var elSource = $('#' + info.originalSourceId);
-                                var elTarget = $('#' + info.originalTargetId);
-                                connectionRemoved(elSource, elTarget, info.connection);
-                                //the connection event will fire after this
-                            });
-                            self.jsPlumbInstance.bind("click", function (connection, originalEvent) {
-                                originalEvent.stopPropagation();
-                                originalEvent.preventDefault();
-                                $rootScope.$apply(function () {
-                                    self.setConnectionAsSelectedItem(connection);
-                                    //since weve stopped propagation of the click event, apply hacky solution to closing open standard context menu
-                                    ContextMenuService.closeFlag = true;
                                 });
-                            });
-                            self.jsPlumbInstance.bind("contextmenu", function (component, originalEvent) {
-                                originalEvent.preventDefault();
-                                originalEvent.stopPropagation();
-
-                                if (component instanceof jsPlumb.Connection) {
+                                self.jsPlumbInstance.bind("connectionMoved", function (info, originalEvent) {
+                                    //fires when connection moved from 1 element to another
+                                    //does not provide source and target properties like connection event
+                                    var elSource = $('#' + info.originalSourceId);
+                                    var elTarget = $('#' + info.originalTargetId);
+                                    connectionRemoved(elSource, elTarget, info.connection);
+                                    //the connection event will fire after this
+                                });
+                                self.jsPlumbInstance.bind("click", function (connection, originalEvent) {
+                                    originalEvent.stopPropagation();
+                                    originalEvent.preventDefault();
                                     $rootScope.$apply(function () {
-                                        self.setConnectionAsSelectedItem(component);
+                                        self.setConnectionAsSelectedItem(connection);
+                                        //since weve stopped propagation of the click event, apply hacky solution to closing open standard context menu
+                                        ContextMenuService.closeFlag = true;
                                     });
-                                    //alert('JsPlumb Context Menu Action');
-                                    ContextMenuService.setup(originalEvent.target, self.connectionsMenu);
-                                    ContextMenuService.open(originalEvent, self.connectionsMenu);
-                                }
-                            });
+                                });
+                                self.jsPlumbInstance.bind("contextmenu", function (component, originalEvent) {
+                                    originalEvent.preventDefault();
+                                    originalEvent.stopPropagation();
+
+                                    if (component instanceof jsPlumb.Connection) {
+                                        $rootScope.$apply(function () {
+                                            self.setConnectionAsSelectedItem(component);
+                                        });
+                                        //alert('JsPlumb Context Menu Action');
+                                        ContextMenuService.setup(originalEvent.target, self.connectionsMenu);
+                                        ContextMenuService.open(originalEvent, self.connectionsMenu);
+                                    }
+                                });
+                            }, 0);
                         })
                     },
                     insertPartToWfModel: function (category, wfPartType, relativePos, genericParams) {
@@ -268,7 +310,7 @@ app.value('jsPlumb', jsPlumb)
                     initFlowStep: function(element, node) {
                         var self = this;
                         this.initFlowNode(element, node, function () {
-                            self.addFlowStepEndpoints(element);
+                            self.addFlowStepEndpoints(element, node);
                         });
                     },
                     initFlowDecision: function(element, node) {
@@ -300,14 +342,16 @@ app.value('jsPlumb', jsPlumb)
                     addFlowSwitchEndpoints: function(element, node) {
                         var self = this;
                         function addSourceEndpoint(anchorPos) {
-                            self.jsPlumbInstance.addEndpoint($(element), {
+                            self.endpointAdded(node.nodeId, "right", self.jsPlumbInstance.addEndpoint($(element), {
                                 anchor: anchorPos,
                                 isSource: true,
-                                maxConnections: -1
-                            }, self.connectorParams);
+                                maxConnections: -1,
+                                parameters: {
+                                    position: 'right'
+                                }
+                            }, self.connectorParams));
                         }
-
-                        this.addTargetEndpoints(element, 0.1, 0.5, 0.9);
+                        this.addTargetEndpoints(element, node);
                         addSourceEndpoint([1, 0.5, 1, 0, 6, 0]);
                     },
                     addFlowDecisionEndpoints: function(element, node) {
@@ -335,17 +379,19 @@ app.value('jsPlumb', jsPlumb)
                                     }]
                                 ],
                                 parameters: {
+                                    position: pos,
                                     sourceInfo: {
                                         name: name,
                                         labelFn: labelFn
                                     }
                                 }
                             }, self.connectorParams);
+                            self.endpointAdded(node.nodeId, pos, endpoint);
                             var label = endpoint.getOverlay('label');
                             self.bindLabel(node, label, labelFn);
                         }
 
-                        this.addTargetEndpoints(element, 0.1, 0.5, 0.9);
+                        this.addTargetEndpoints(element, node);
                         addSourceEndpoint('left', 'true', function() {
                             return node.trueLabel;
                         });
@@ -353,29 +399,27 @@ app.value('jsPlumb', jsPlumb)
                             return node.falseLabel;
                         });
                     },
-                    addFlowStepEndpoints: function(element) {
-                        this.addTargetEndpoints(element, 0.35, 0.5, 0.65);
-                        this.jsPlumbInstance.addEndpoint($(element), {
+                    addFlowStepEndpoints: function(element, node) {
+                        var self = this;
+                        this.addTargetEndpoints(element, node);
+                        self.endpointAdded(node.nodeId, 'bottom', self.jsPlumbInstance.addEndpoint($(element), {
                             anchor: [0.5, 1, 0, 1, 0, 5],
-                            isSource: true
-                        }, this.connectorParams);
+                            isSource: true,
+                            parameters: {
+                                position: 'bottom'
+                            }
+                        }, this.connectorParams));
                     },
-                    addTargetEndpoints: function(element, left, middle, right) {
-                        this.jsPlumbInstance.addEndpoint($(element), {
-                            anchor: [left, 0, 0, -1, 0, -6], //x, y, x-direction, y-dir, x-offset, y-off
+                    addTargetEndpoints: function(element, node) {
+                        var self = this;
+                        self.endpointAdded(node.nodeId, 'top', self.jsPlumbInstance.addEndpoint($(element), {
+                            anchor: [0.5, 0, 0, -1, 0, -6],
                             isTarget: true,
-                            maxConnections: -1
-                        }, this.connectorParams);
-                        this.jsPlumbInstance.addEndpoint($(element), {
-                            anchor: [middle, 0, 0, -1, 0, -6],
-                            isTarget: true,
-                            maxConnections: -1
-                        }, this.connectorParams);
-                        this.jsPlumbInstance.addEndpoint($(element), {
-                            anchor: [right, 0, 0, -1, 0, -6],
-                            isTarget: true,
-                            maxConnections: -1
-                        }, this.connectorParams);
+                            maxConnections: -1,
+                            parameters: {
+                                position: 'top'
+                            }
+                        }, this.connectorParams));
                     },
                     checkForAndHandleRemovedNodes: function (nodes) {
                         //detect of a node has been deleted then remove endpoints and connections
@@ -393,6 +437,7 @@ app.value('jsPlumb', jsPlumb)
                             for (var i = 0; i < this.nodeElements.length; i++) {
                                 var pos = posInNodes(this.nodeElements[i].node);
                                 if (pos === -1) {
+                                    this.endpoints[this.nodeElements[i].nodeId] = undefined;
                                     this.unBindLabels(this.nodeElements[i].node);
                                     this.jsPlumbInstance.removeAllEndpoints(this.nodeElements[i].element);
                                     this.nodeElements.splice(i, 1);

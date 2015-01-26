@@ -1,4 +1,4 @@
-<div act-base="actSequence">
+<div act-base="actSequence" ng-dblclick="maximizer()">
 
     <div ng-if="!cantExpand" class="sequence-body">
 
@@ -18,7 +18,7 @@
 
     </div>
 
-    <div ng-if="cantExpand" class="collapsed" ng-dblclick="maximizer()">
+    <div ng-if="cantExpand" class="collapsed">
 
         Double click to maximize
 

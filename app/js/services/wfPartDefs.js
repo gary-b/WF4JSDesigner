@@ -7,6 +7,24 @@ app.factory('wfPartDefs', function () {
             return v.toString(16);
         });
     }
+    function removeFromArrayByProp(array, prop, value) {
+        var index = null;
+        for(var i = 0; i < array.length; i++) {
+            if(array[i][prop] === value){
+                index = i;
+                break;
+            }
+        }
+        if(index != null) {
+            array.splice(index, 1);
+        }
+    }
+    function removeFromArray(array, element) {
+        var index = array.indexOf(element);
+        if(index != -1) {
+            array.splice(index, 1);
+        }
+    }
     return {
         exists: function exists(activityType) {
             return (this.definitions[activityType] != null);
@@ -96,6 +114,7 @@ app.factory('wfPartDefs', function () {
                     model.startNode = null;
                     model.nodes = [];
                     model.variables = [];
+                    model.connections = [];
                 },
                 appendModelMethods: function (model) {
                     model.getChildren = function() {
@@ -119,30 +138,37 @@ app.factory('wfPartDefs', function () {
                         if (nodeId == null) {
                             throw "the supplied wfPart is not a child of the flowchart";
                         }
+
+                        /* rely on jsPlumb raising events as the connections are removed and
+                            these resulting in relevant nodes being disconnected
                         angular.forEach(this.nodes, function(node) {
                             node.disconnectNode(nodeId);
-                        });
+                        });*/
                     },
-                        model.deleteNode = function(node) {
-                            var index = -1;
-                            for(var i = 0; i < this.nodes.length; i++) {
-                                if (this.nodes[i] === node) {
-                                    index = i;
-                                }
+                    model.deleteNode = function(node) {
+                        var index = -1;
+                        for(var i = 0; i < this.nodes.length; i++) {
+                            if (this.nodes[i] === node) {
+                                index = i;
                             }
-                            if (index > -1) {
-                                this.nodes.splice(index, 1);
-                            } else {
-                                throw "the supplied node is not in nodes collection on flowchart";
-                            }
-                        },
-                        model.connectNode = function (nodeId, sourceInfo) {
-                            this.startNode = nodeId;
-                        };
-                    model.disconnectNode = function (nodeId) {
-                        if (this.startNode == nodeId) {
-                            this.startNode = null;
                         }
+                        if (index > -1) {
+                            this.nodes.splice(index, 1);
+                        } else {
+                            throw "the supplied node is not in nodes collection on flowchart";
+                        }
+                    },
+                    model.connectNode = function (nodeId, sourceInfo, sourcePos, targetPos) {
+                        this.startNode = nodeId;
+                        this.connections.push({
+                            sourcePos: sourcePos,
+                            targetPos: targetPos,
+                            targetNodeId: nodeId
+                        });
+                    };
+                    model.disconnectNode = function (info) {
+                        this.startNode = null;
+                        this.connections.length = 0;
                     };
                 }
             },
@@ -153,16 +179,20 @@ app.factory('wfPartDefs', function () {
                     model.position = null;
                     model.next = null;
                     model.action = null;
+                    model.connections = [];
                 },
                 appendModelMethods: function (model) {
-                    model.connectNode = function (nodeId, sourceInfo) {
+                    model.connectNode = function (nodeId, sourceInfo, sourcePos, targetPos) {
                         this.next = nodeId;
+                        this.connections.push({
+                            sourcePos: sourcePos,
+                            targetPos: targetPos,
+                            targetNodeId: nodeId
+                        });
                     };
-                    model.disconnectNode = function (nodeId) {
-                        //the nodeId may not relate to a node we are connected to
-                        if (this.next === nodeId) {
-                            this.next = null;
-                        }
+                    model.disconnectNode = function (info) {
+                        this.next = null;
+                        this.connections.length = 0;
                     };
                     model.tiedToPart = function (wfPart) {
                         return (this.action === wfPart);
@@ -181,6 +211,7 @@ app.factory('wfPartDefs', function () {
                     model.condition = null;
                     model.falseLabel = 'False';
                     model.trueLabel = 'True';
+                    model.connections = [];
                 },
                 appendModelMethods: function (model) {
                     model.getChildren = function() {
@@ -189,7 +220,7 @@ app.factory('wfPartDefs', function () {
                     model.getVariableArray = function() {
                         return null;
                     };
-                    model.connectNode = function (nodeId, sourceInfo) {
+                    model.connectNode = function (nodeId, sourceInfo, sourcePos, targetPos) {
                         //not checking nodeId valid
                         if (sourceInfo == null) {
                             throw 'connectNode on FlowDecision called without sourceInfo';
@@ -202,16 +233,21 @@ app.factory('wfPartDefs', function () {
                         } else {
                             throw 'connectNode on FlowDecision called with sourceInfo.name having unexpected value';
                         }
+                        this.connections.push({
+                            sourcePos: sourcePos,
+                            targetPos: targetPos,
+                            name: sourceInfo.name,
+                            targetNodeId: nodeId
+                        });
                     };
-                    model.disconnectNode = function (nodeId) {
-                        //the nodeId may not relate to a node we are connected to at all
-                        if (this.true === nodeId) {
+                    model.disconnectNode = function (info) {
+                        if (info.name === 'true') {
                             this.true = null;
-                        }
-                        if (this.false === nodeId) {
+                        } else if (info.name === 'false') {
                             this.false = null;
                         }
-                    };
+                        removeFromArrayByProp(this.connections, 'name', info.name);
+                    },
                     model.tiedToPart = function (wfPart) {
                         return (this === wfPart);
                     };
@@ -236,6 +272,7 @@ app.factory('wfPartDefs', function () {
                         case: null,
                         defaultDisplayName: 'Default'
                     };
+                    model.connections = [];
                 },
                 appendModelMethods: function (model) {
                     model.getChildren = function() {
@@ -244,7 +281,7 @@ app.factory('wfPartDefs', function () {
                     model.getVariableArray = function() {
                         return null;
                     };
-                    model.connectNode = function (nodeId, sourceInfo) {
+                    model.connectNode = function (nodeId, sourceInfo, sourcePos, targetPos) {
                         if (sourceInfo == null) {
                             throw 'FlowSwitch.connectNode: sourceInfo must not be null';
                         }
@@ -253,6 +290,11 @@ app.factory('wfPartDefs', function () {
                         }
                         sourceInfo.case.nodeId = nodeId;
                         this.cases.push(sourceInfo.case);
+                        this.connections.push({
+                            sourcePos: sourcePos,
+                            targetPos: targetPos,
+                            'case': sourceInfo.case
+                        });
                         return sourceInfo.case;
                     };
                     model.createCase = function () {
@@ -263,19 +305,12 @@ app.factory('wfPartDefs', function () {
                             default: self.default //reference default so its accessible from prop grid
                         };
                     },
-                    model.disconnectNode = function (nodeId) {
-                        var i = 0, foundCase = null;
-                        while(i < this.cases.length) {
-                            if (this.cases[i].nodeId === nodeId) {
-                                foundCase = this.cases[i];
-                                if (this.default.case === foundCase) {
-                                    this.default.case = null;
-                                }
-                                this.cases.splice(i, 1);
-                            } else {
-                                i++;
-                            }
+                    model.disconnectNode = function (info) {
+                        if (this.default.case === info.case) {
+                            this.default.case = null;
                         }
+                        removeFromArray(this.cases, info.case);
+                        removeFromArrayByProp(this.connections, 'case', info.case);
                     };
                     model.tiedToPart = function (wfPart) {
                         return (this === wfPart);

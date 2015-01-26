@@ -17,11 +17,11 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
             scope.cantExpand = attrs.cantExpand === 'true';
             scope.mustExpand = attrs.mustExpand === 'true';
             scope.expanded = false;
+            cntrl.flowchartInstance = flowchartPlumb.createFlowchart();
             scope.expander = function() {
                 scope.expanded = !scope.expanded;
                 //wait for dom, initialize jsPlumb and create endpoint on start-node
                 if (scope.expanded) {
-                    cntrl.flowchartInstance = flowchartPlumb.createFlowchart();
                     cntrl.flowchartInstance.initFlowchart(element, scope.actFlowchart, 'ConnectionsContextMenu');
                     scope.availableTypes = environment.types;
 
