@@ -177,11 +177,40 @@ app.value('jsPlumb', jsPlumb)
                                     });
                                 }
                                 angular.forEach(flowchartModel.nodes, function (node) {
-                                    angular.forEach(node.connections, function(con) {
-                                        self.jsPlumbInstance.connect({
-                                            source: self.endpoints[node.nodeId][con.sourcePos],
-                                            target: self.endpoints[con.targetNodeId][con.targetPos]
+                                    angular.forEach(node.connections, function(conModel) {
+                                        var sourceEndpoint = self.endpoints[node.nodeId][conModel.sourcePos];
+                                        var targetEndpoint = self.endpoints[conModel.targetNodeId][conModel.targetPos];
+                                        var connection = self.jsPlumbInstance.connect({
+                                            source: sourceEndpoint,
+                                            target: targetEndpoint
                                         });
+                                        if (node.type === 'FlowDecision') {
+                                            var sourceInfo = sourceEndpoint.getParameter('sourceInfo');
+                                            connection.addOverlay([ 'Label', {
+                                                label: sourceInfo.labelFn(),
+                                                id:'label'
+                                            } ]);
+                                            connection.setParameter('name', sourceInfo.name);
+                                            var label = connection.getOverlay('label');
+                                            self.bindLabel(connection, label, sourceInfo.labelFn);
+                                        } else if (node.type === 'FlowSwitch') {
+                                            var sourceInfo = {
+                                                case: conModel.case
+                                            };
+                                            //retVal will be a case object
+                                            var labelFn = function() {
+                                                return (sourceInfo.case.default.case === sourceInfo.case) ?
+                                                    coalesce(sourceInfo.case.default.defaultDisplayName, '') :
+                                                    coalesce(sourceInfo.case.caseValue, '');
+                                            };
+                                            connection.setParameter('case', sourceInfo.case);
+                                            connection.addOverlay([ 'Label', {
+                                                label: labelFn(),
+                                                id:'label'
+                                            } ]);
+                                            var label = connection.getOverlay('label');
+                                            self.bindLabel(connection, label, labelFn);
+                                        }
                                     });
                                 });
                                 self.jsPlumbInstance.bind("connection", function (info, originalEvent) {

@@ -293,7 +293,8 @@ app.factory('wfPartDefs', function () {
                         this.connections.push({
                             sourcePos: sourcePos,
                             targetPos: targetPos,
-                            'case': sourceInfo.case
+                            'case': sourceInfo.case,
+                            targetNodeId: nodeId
                         });
                         return sourceInfo.case;
                     };
