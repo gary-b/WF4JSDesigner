@@ -164,6 +164,9 @@ app.value('jsPlumb', jsPlumb)
                             $(element).find('.start-node').data('flowchartPart', self.flowchart);
                             self.jsPlumbInstance = jsPlumb.getInstance();
                             self.jsPlumbInstance.setContainer($(element).find('.drop-zone'));
+                            self.jsPlumbInstance.bind("connection", function (info, originalEvent) {
+                                info.connection.addOverlay([ "Arrow", { foldback:0.75, location:1, width:10, length:15 } ]);
+                            });
                             self.endpointAdded("FlowChart", "bottom", self.jsPlumbInstance.addEndpoint($(element).find('.start-node'), {
                                 anchor: [0.5, 1, 0, 1, 0, 4],
                                 isSource: true,
