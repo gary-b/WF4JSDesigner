@@ -84,6 +84,29 @@ app.value('jsPlumb', jsPlumb)
                                     return ifnull;
                                 return value;
                             }
+                            function decorateFlowDecisionConnection(connection, sourceInfo) {
+                                connection.addOverlay([ 'Label', {
+                                    label: sourceInfo.labelFn(),
+                                    id:'label'
+                                } ]);
+                                connection.setParameter('name', sourceInfo.name);
+                                var label = connection.getOverlay('label');
+                                self.bindLabel(connection, label, sourceInfo.labelFn);
+                            }
+                            function decorateFlowSwitchConnection(connection, sourceInfo) {
+                                var labelFn = function () {
+                                    return (sourceInfo.case.default.case === sourceInfo.case) ?
+                                        coalesce(sourceInfo.case.default.defaultDisplayName, '') :
+                                        coalesce(sourceInfo.case.caseValue, '');
+                                };
+                                connection.setParameter('case', sourceInfo.case);
+                                connection.addOverlay(['Label', {
+                                    label: labelFn(),
+                                    id: 'label'
+                                }]);
+                                var label = connection.getOverlay('label');
+                                self.bindLabel(connection, label, labelFn);
+                            }
                             function connectionAdded(elSource, elTarget, connection, sourceEndpoint, targetEndpoint) {
                                 var sourcePart = $(elSource).data('flowchartPart');
                                 var targetPart = $(elTarget).data('flowchartPart');
@@ -98,13 +121,7 @@ app.value('jsPlumb', jsPlumb)
                                     // We use this to bind the label value to a label overlay displayed on the connection.
                                     var sourceInfo = sourceEndpoint.getParameter('sourceInfo');
                                     sourcePart.connectNode(targetPart.nodeId, sourceInfo, sourcePos, targetPos);
-                                    connection.addOverlay([ 'Label', {
-                                        label: sourceInfo.labelFn(),
-                                        id:'label'
-                                    } ]);
-                                    connection.setParameter('name', sourceInfo.name);
-                                    var label = connection.getOverlay('label');
-                                    self.bindLabel(connection, label, sourceInfo.labelFn);
+                                    decorateFlowDecisionConnection(connection, sourceInfo);
                                 } else if (sourcePart.type === 'FlowSwitch') {
                                     // Here we must retrieve a new case object from the FlowSwitch, then pass this
                                     // back to the flowswitch when we call connectNode. We need the case object so
@@ -120,19 +137,7 @@ app.value('jsPlumb', jsPlumb)
                                         case: sourcePart.createCase()
                                     };
                                     sourcePart.connectNode(targetPart.nodeId, sourceInfo, sourcePos, targetPos);
-                                    //retVal will be a case object
-                                    var labelFn = function() {
-                                        return (sourceInfo.case.default.case === sourceInfo.case) ?
-                                            coalesce(sourceInfo.case.default.defaultDisplayName, '') :
-                                            coalesce(sourceInfo.case.caseValue, '');
-                                    };
-                                    connection.setParameter('case', sourceInfo.case);
-                                    connection.addOverlay([ 'Label', {
-                                        label: labelFn(),
-                                        id:'label'
-                                    } ]);
-                                    var label = connection.getOverlay('label');
-                                    self.bindLabel(connection, label, labelFn);
+                                    decorateFlowSwitchConnection(connection, sourceInfo);
                                     self.showFlowSwitchCasePopup(sourceInfo.case, connection);
                                 } else if (sourcePart.type === 'Flowchart' || sourcePart.type === 'FlowStep') {
                                     sourcePart.connectNode(targetPart.nodeId, null, sourcePos, targetPos);
@@ -186,30 +191,12 @@ app.value('jsPlumb', jsPlumb)
                                         });
                                         if (node.type === 'FlowDecision') {
                                             var sourceInfo = sourceEndpoint.getParameter('sourceInfo');
-                                            connection.addOverlay([ 'Label', {
-                                                label: sourceInfo.labelFn(),
-                                                id:'label'
-                                            } ]);
-                                            connection.setParameter('name', sourceInfo.name);
-                                            var label = connection.getOverlay('label');
-                                            self.bindLabel(connection, label, sourceInfo.labelFn);
+                                            decorateFlowDecisionConnection(connection, sourceInfo);
                                         } else if (node.type === 'FlowSwitch') {
                                             var sourceInfo = {
                                                 case: conModel.case
                                             };
-                                            //retVal will be a case object
-                                            var labelFn = function() {
-                                                return (sourceInfo.case.default.case === sourceInfo.case) ?
-                                                    coalesce(sourceInfo.case.default.defaultDisplayName, '') :
-                                                    coalesce(sourceInfo.case.caseValue, '');
-                                            };
-                                            connection.setParameter('case', sourceInfo.case);
-                                            connection.addOverlay([ 'Label', {
-                                                label: labelFn(),
-                                                id:'label'
-                                            } ]);
-                                            var label = connection.getOverlay('label');
-                                            self.bindLabel(connection, label, labelFn);
+                                            decorateFlowSwitchConnection(connection, sourceInfo);
                                         }
                                     });
                                 });
