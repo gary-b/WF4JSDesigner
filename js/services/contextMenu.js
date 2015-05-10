@@ -27,11 +27,9 @@
  @author Ian Kennington Walter (http://ianvonwalter.com)
  */
 app.factory('contextMenu', function($rootScope, $document) {
-    return {
+    var service = {
         menuElements: [],
         boundHandlers: [],
-        closeFlag: false,   //external directives set this to false when they have stopped click event propagating
-        closeFlagWatchDereg: null,
         detectingCloseEvents: false, // flag ultimately detects if were currently listening for events that will close all open menus
         open: function(event, menuElement) { // opens the menu passed in at mouse location, calls detectCloseEvents
             this.close();
@@ -59,18 +57,7 @@ app.factory('contextMenu', function($rootScope, $document) {
             if(this.detectingCloseEvents){
                 return;
             }
-            //Directives that stop propagation of the click event set this to true
-            //We will therefore watch this value when menu is open
-            //Hacky solution
-            this.closeFlag = false;
             var self = this;
-            this.closeFlagWatchDereg = $rootScope.$watch(function() {
-                return self.closeFlag;
-            }, function (newValue, oldValue) {
-                if (newValue === true) {
-                    self.close();
-                }
-            });
             var handleKeyUpEvent = function(event) {
                 if (event.keyCode === 27) {
                     $rootScope.$apply(function() {
@@ -105,9 +92,6 @@ app.factory('contextMenu', function($rootScope, $document) {
             if (this.menuElements.length == 0){
                 return;
             }
-            if (this.closeFlagWatchDereg !== null) {
-                this.closeFlagWatchDereg();
-            }
             angular.forEach(this.menuElements, function(menuElement){
                 menuElement.removeClass('show');
                 menuElement.addClass('hide');
@@ -117,4 +101,11 @@ app.factory('contextMenu', function($rootScope, $document) {
             this.detectingCloseEvents = false;
         }
     };
+    $rootScope.$on('contextMenu:open', function(event, params){
+        service.open(params.originalEvent, params.contextMenu);
+    });
+    $rootScope.$on('contextMenu:close', function(event, argObject){
+        service.close();
+    });
+    return service;
 });

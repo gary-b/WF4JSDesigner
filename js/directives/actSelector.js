@@ -16,7 +16,6 @@ app.directive('actSelector', function($compile, wfPartDefs, contextMenu) {
             var lastScope;
             function destroyLastDirective(){
                 if (lastDirective != null) {
-                    contextMenu.closeFlag = true;
                     element.removeAttr(lastDirective);
                     lastScope.$destroy();
                 }
