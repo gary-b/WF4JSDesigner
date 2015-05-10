@@ -83,11 +83,11 @@ app.directive('wfVariables', function(environment, designerUI) {
                 remove(arr, variable);
                 resetView(scope.part); // hacky
             };
+            //FIXME: repeated this code in wfArguments
             function remove(arr, item) {
-                for(var i = arr.length; i--;) {
-                    if(arr[i] === item) {
-                        arr.splice(i, 1);
-                    }
+                var index = arr.indexOf(item);
+                if (index > -1) {
+                    arr.splice(index, 1);
                 }
             }
         }

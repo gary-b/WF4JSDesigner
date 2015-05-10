@@ -19,10 +19,14 @@ app.factory('wfPartDefs', function () {
             array.splice(index, 1);
         }
     }
+    //FIXME: similar to remove(..) function in wfVariables and wfArguments
     function removeFromArray(array, element) {
         var index = array.indexOf(element);
         if(index != -1) {
             array.splice(index, 1);
+            return true;
+        } else {
+            return false;
         }
     }
     return {
@@ -93,17 +97,10 @@ app.factory('wfPartDefs', function () {
                         return this.variables; // we want reference to actual array
                     };
                     model.deleteChild = function(child) {
-                        var index = -1;
-                        for(var i = 0; i < this.activities.length; i++) {
-                            if (this.activities[i] === child) {
-                                index = i;
-                            }
-                        }
-                        if (index > -1) {
-                            this.activities.splice(index, 1);
-                        } else {
+                        if (!removeFromArray(this.activities, child)) {
                             throw "the supplied activity is not a child of this activity";
                         }
+
                     }
                 }
             },
@@ -119,9 +116,7 @@ app.factory('wfPartDefs', function () {
                 appendModelMethods: function (model) {
                     model.getChildren = function() {
                         var activities = [];
-                        angular.forEach(this.nodes, function(node) {
-                            //TODO: get activity from property depending on type of flownode
-                        });
+                        //TODO: get activity from property depending on type of flownode
                         return activities;
                     };
                     model.getVariableArray = function() {
@@ -146,15 +141,7 @@ app.factory('wfPartDefs', function () {
                         });*/
                     },
                     model.deleteNode = function(node) {
-                        var index = -1;
-                        for(var i = 0; i < this.nodes.length; i++) {
-                            if (this.nodes[i] === node) {
-                                index = i;
-                            }
-                        }
-                        if (index > -1) {
-                            this.nodes.splice(index, 1);
-                        } else {
+                        if (!removeFromArray(this.nodes, node)) {
                             throw "the supplied node is not in nodes collection on flowchart";
                         }
                     },

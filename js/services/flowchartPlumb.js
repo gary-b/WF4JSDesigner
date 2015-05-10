@@ -444,17 +444,9 @@ app.value('jsPlumb', jsPlumb)
                         //detect of a node has been deleted then remove endpoints and connections
                         //NOTE: this code runs before the element is removed from the DOM
                         //if something were to happen that caused it to run afterward, might result in errors
-                        function posInNodes(node) {
-                            for (var i = 0; i < nodes.length; i++) {
-                                if (nodes[i] === node) {
-                                    return i;
-                                }
-                            }
-                            return -1;
-                        }
                         if (nodes.length < this.nodeElements.length) {
                             for (var i = 0; i < this.nodeElements.length; i++) {
-                                var pos = posInNodes(this.nodeElements[i].node);
+                                var pos = nodes.indexOf(this.nodeElements[i].node);
                                 if (pos === -1) {
                                     this.endpoints[this.nodeElements[i].nodeId] = undefined;
                                     this.unBindLabels(this.nodeElements[i].node);

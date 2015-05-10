@@ -27,12 +27,11 @@ app.directive('wfArguments', function(environment, wfModel) {
             scope.deleteArgument = function(argument) {
                 remove(scope.arguments, argument);
             };
-            //repeated this code in wfVariables
+            //FIXME: repeated this code in wfVariables
             function remove(arr, item) {
-                for(var i = arr.length; i--;) {
-                    if(arr[i] === item) {
-                        arr.splice(i, 1);
-                    }
+                var index = arr.indexOf(item);
+                if (index > -1) {
+                    arr.splice(index, 1);
                 }
             }
         }
