@@ -1,7 +1,7 @@
 'use strict';
 
 app.value('jsPlumb', jsPlumb)
-    .factory('flowchartPlumb', function (jsPlumb, renderWaiter, designerUI, $rootScope, ContextMenuService, wfPartDefs) {
+    .factory('flowchartPlumb', function (jsPlumb, renderWaiter, designerUI, $rootScope, contextMenu, wfPartDefs) {
         return {
             getPropGridDirective: function (type) {
                 switch(type) {
@@ -253,7 +253,7 @@ app.value('jsPlumb', jsPlumb)
                                     $rootScope.$apply(function () {
                                         self.setConnectionAsSelectedItem(connection);
                                         //since weve stopped propagation of the click event, apply hacky solution to closing open standard context menu
-                                        ContextMenuService.closeFlag = true;
+                                        contextMenu.closeFlag = true;
                                     });
                                 });
                                 self.jsPlumbInstance.bind("contextmenu", function (component, originalEvent) {
@@ -264,9 +264,7 @@ app.value('jsPlumb', jsPlumb)
                                         $rootScope.$apply(function () {
                                             self.setConnectionAsSelectedItem(component);
                                         });
-                                        //alert('JsPlumb Context Menu Action');
-                                        ContextMenuService.setup(originalEvent.target, self.connectionsMenu);
-                                        ContextMenuService.open(originalEvent, self.connectionsMenu);
+                                        contextMenu.open(originalEvent, self.connectionsMenu);
                                     }
                                 });
                             }, 0);

@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, environment, $rootScope) {
+app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, environment) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/actFlowchart.html',
@@ -87,7 +87,7 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                 scope.expander = undefined;
             }
             scope.maximizer = function () {
-                $rootScope.$emit('maximizedWfPart', scope.actFlowchart);
+                scope.$emit('wfPart:maximize', scope.actFlowchart);
             };
         }
     };

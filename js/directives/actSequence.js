@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actSequence', function($rootScope) {
+app.directive('actSequence', function() {
     return {
         restrict: 'A',
         templateUrl: './js/templates/actSequence.html',
@@ -10,7 +10,7 @@ app.directive('actSequence', function($rootScope) {
         link: function(scope, element, attrs, cntrl) {
             scope.cantExpand = attrs.cantExpand === 'true';
             scope.maximizer = function () {
-                $rootScope.$emit('maximizedWfPart', scope.actSequence);
+                scope.$emit('wfPart:maximize', scope.actSequence);
             };
         }
     };

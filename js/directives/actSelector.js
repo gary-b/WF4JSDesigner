@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actSelector', function($compile, wfPartDefs, ContextMenuService) {
+app.directive('actSelector', function($compile, wfPartDefs, contextMenu) {
     return {
         restrict: 'A',
         scope:false,
@@ -16,7 +16,7 @@ app.directive('actSelector', function($compile, wfPartDefs, ContextMenuService) 
             var lastScope;
             function destroyLastDirective(){
                 if (lastDirective != null) {
-                    ContextMenuService.closeFlag = true;
+                    contextMenu.closeFlag = true;
                     element.removeAttr(lastDirective);
                     lastScope.$destroy();
                 }
@@ -49,7 +49,7 @@ app.directive('actSelector', function($compile, wfPartDefs, ContextMenuService) 
                     }
                 });
             }
-            scope.$on('nearestActSelectorDestroyDirective', function(event, args) {
+            scope.$on('rootWfPart:Deleted', function(event, args) {
                 destroyLastDirective();
             });
         }

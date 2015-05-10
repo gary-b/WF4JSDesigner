@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfDesignSurface', function($rootScope) {
+app.directive('wfDesignSurface', function() {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfDesignSurface.html',
@@ -9,15 +9,15 @@ app.directive('wfDesignSurface', function($rootScope) {
         },
         link: function(scope, element, attrs, ctrl) {
             scope.$watch('wfDesignSurface', function(newVal, oldVal) {
-                if (newVal == null) {
-                   scope.$broadcast('nearestActSelectorDestroyDirective');
+                if (newVal == null && oldVal != null) {
+                   scope.$broadcast('rootWfPart:Deleted');
                 }
                 scope.display(newVal);
             });
-            $rootScope.$on('maximizedWfPart', function(event, wfPart) {
+            scope.$on('wfPart:maximize', function(event, wfPart) {
                 scope.display(wfPart);
             });
-            $rootScope.$on('wfPartDeleted', function(event, wfPart) {
+            scope.$on('wfPart:delete', function(event, wfPart) {
                 if (scope.displayWfPart === wfPart
                     && scope.wfDesignSurface !== wfPart
                     && wfPart.parent != null) {

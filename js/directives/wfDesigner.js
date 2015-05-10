@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfDesigner', function(wfManipulator, designerUI, $rootScope) {
+app.directive('wfDesigner', function(wfManipulator, designerUI) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfDesigner.html',
@@ -20,7 +20,7 @@ app.directive('wfDesigner', function(wfManipulator, designerUI, $rootScope) {
                 } else {
                     wfManipulator.deleteWfPart(designerUI.selectedItem);
                 }
-                $rootScope.$emit('wfPartDeleted', designerUI.selectedItem);
+                scope.$broadcast('wfPart:delete', designerUI.selectedItem);
                 designerUI.selectedItem = null;
             };
             // ############  Bottom Pad ###############
