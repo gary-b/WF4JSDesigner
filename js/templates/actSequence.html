@@ -1,0 +1,27 @@
+<div act-base="actSequence" ng-dblclick="maximizer()">
+
+    <div ng-if="!cantExpand" class="sequence-body">
+
+        <div act-drop-zone="actSequence.activities"
+             parent="actSequence"
+             index="-1"></div>
+
+        <div ng-repeat="activity in actSequence.activities">
+
+            <div act-selector="activity"></div>
+
+            <div act-drop-zone="actSequence.activities"
+                 parent="actSequence"
+                 index="$index"></div>
+
+        </div>
+
+    </div>
+
+    <div ng-if="cantExpand" class="collapsed">
+
+        Double click to maximize
+
+    </div>
+
+</div>

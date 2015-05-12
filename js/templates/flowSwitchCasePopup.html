@@ -1,0 +1,17 @@
+<div ng-if="showCasePopup" class="modal">
+    <div class="modal-overlay">
+        &nbsp;
+    </div>
+    <div class="modal-dialog">
+        <div class="modal-header">
+            Add new case
+        </div>
+        <div class="modal-body">
+            <input type="text" ng-model="caseValue" />
+        </div>
+        <div class="modal-footer clearfix">
+            <button type="button" ng-click="cancelCase()">Cancel</button>
+            <button type="button" ng-click="setCase(caseValue)">OK</button>
+        </div>
+    </div>
+</div>

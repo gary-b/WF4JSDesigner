@@ -1,0 +1,445 @@
+/* app css stylesheet */
+/* General Styling */
+
+h1 {
+    font-size: 1.3em;
+    line-height: 1.5em;
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: inline-block;
+}
+
+button {
+    display: inline-block;
+}
+
+#wfDesigner {
+    position: absolute;
+    top: 3em;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: dotted;
+    border-width: thin;
+}
+/* Component styling*/
+#wfDesigner {
+    text-align: center;
+}
+.activity {
+    position: relative;
+    border: 1px solid darkgray;
+    display: inline-block;
+    min-width: 220px;
+    margin: 0 auto;
+}
+.activity.selected, .flow-node.selected {
+    border-color: deepskyblue;
+}
+.header.selected  {
+    background-color: #69f2ff !important;
+}
+.activity .header {
+    padding: 1px 2px; /*top+bottom left+right*/
+    border-bottom: 1px solid darkgray;
+    width:99%;
+    background-color: lightgray;
+}
+.right-icon {
+    position: absolute;
+    top: 0.2em;
+    right: 0.2em;
+    font-size: 0.8em;
+}
+.single-line-input {
+    width: 100%;
+    display: block;
+}
+.single-line-input .title {
+    float:left;
+}
+.single-line-input .control {
+    display: block;
+    overflow: hidden;
+    padding: 0 4px 0 6px
+}
+.single-line-input input {
+    width: 100%;
+}
+.write-line-body {
+    padding: 10px 10px; /*top+bottom left+right*/
+}
+.act-drop-zone {
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0px;
+}
+.sequence-body {
+    padding: 0px 3px;
+}
+div.arrow-down {
+    margin: 0 auto;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid dimgray;
+    font-size: 0;
+    line-height: 0;
+}
+#ButtonBar a.toggle {
+    float:left;
+    background: #ccc;
+    cursor: pointer;
+    border-top: solid 1px #eaeaea;
+    border-left: solid 1px #eaeaea;
+    border-bottom: solid 1px #777;
+    border-right: solid 1px #777;
+    padding: 1px 1px;
+}
+#ButtonBar a.toggle.down {
+    background: #bbb;
+    border-top: solid 1px #777;
+    border-left: solid 1px #777;
+    border-bottom:solid 1px  #eaeaea;
+    border-right: solid 1px #eaeaea;
+}
+#Breadcrumbs i {
+    font-size: 0.66em !important;
+}
+/* #############    Context Menu   ########## */
+
+.context-menu {
+    position: fixed;
+}
+.context-menu ul {
+    background-color: #fff;
+    padding: 0.3px 0px;
+    list-style: none;
+    text-align: left;
+    border: 1px solid lightgrey;
+}
+.context-menu ul a {
+    text-decoration: none;
+    padding: 0.3em 0.6em;
+    color: #000;
+    min-width: 80px;
+    display: block;
+}
+.context-menu ul a:hover {
+    background-color: #f5f5f5;
+}
+.show {
+    display:block;
+}
+.hide {
+    display:none;
+}
+/* #############    Variables / Arguments Pads   ########## */
+
+.bottom-pad {
+    position:absolute;
+    bottom:1.6em;
+    right:0px;
+    left:110px;
+    max-height:200px;
+    background-color:white;
+    overflow-y:scroll;
+}
+.bottom-pad table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.bottom-pad table, .bottom-pad th, .bottom-pad td {
+    border: 1px solid darkgray;
+}
+#NewBar {
+    width:100%;
+    text-align: left;
+    font-style: italic;
+}
+.delete-row button {
+    padding: 0px 0.3em;
+    margin: 0px;
+}
+.pad td input, .pad td select {
+    width: 95%;
+}
+.pad td {
+    padding: 0px 0px;
+}
+/* #############  Arguments Pad  ########### */
+.prop-label {
+    width:38%;
+    float:left;
+    text-align: left;
+    margin-left: 2%;
+}
+.prop-control {
+    width:58%;
+    float:left;
+    margin-right: 2%;
+}
+.prop-control input, .prop-control select {
+    width:100%;
+}
+/* #############   Page Layout   ########### */
+
+#ToolboxCol {
+    position:absolute;
+    left:0px;
+    top:0px;
+    bottom:0px;
+    width:110px;
+    border-left-style: none;
+    border-top-style: none;
+    border-bottom-style: none;
+    border-right-style: dotted;
+    border-width:thin;
+}
+#DesignSurfaceCol {
+    position: absolute;
+    top: 1.2em;
+    left: 110px;
+    right: 0px;
+    bottom: 1.5em;
+    overflow-y: scroll;
+}
+#Breadcrumbs {
+    text-align: left;
+    position: absolute;
+    top: 0;
+    right: 258.5px;
+    left: 110px;
+    height: 1.2em;
+    border-bottom-style: dotted;
+    border-width:thin;
+}
+#ButtonBar {
+    position: absolute;
+    bottom: 0px;
+    left: 110px;
+    right: 0px;
+    height: 1.5em;
+    border-top-style: dotted;
+    border-width: thin;
+    padding: 0px 1px
+}
+#wfPropertyGrid {
+    position: absolute;
+    top: 0;
+    /*bottom: 0px;*/
+    right: 22.5px;
+    width: 250px;
+    background-color: #ffffff;
+    border-left-style: dotted;
+    border-bottom-style: dotted;
+    border-right-style: dotted;
+    border-width:thin;
+}
+
+/* #############     Toolbox     ########### */
+
+#ToolList {
+    padding: 0px 0px;
+    display: table;
+    #position: relative;
+    overflow: hidden;
+    border-collapse:separate;
+    border-spacing:1px 3px;
+
+    list-style-type:none;
+    margin:0px 0px;
+    min-height:95%
+}
+.col-title {
+    text-align: center;
+    border-bottom-style: dotted;
+    border-bottom-width: thin;
+    height: 1.2em;
+}
+.tool {
+    cursor:move;
+    #position: absolute;
+    #top: 50%;
+    display: table-cell;
+    vertical-align: middle;
+
+    width: 105px;
+    height: 25px;
+    margin-bottom:5px;
+    z-index:998;
+
+    text-align:center;
+
+    color: #505050;
+    background: #dddddd;
+    background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #dddddd), color-stop(1, #fafafa));
+    background: -ms-linear-gradient(bottom, #dddddd, #fafafa);
+    background: -moz-linear-gradient(center bottom, #dddddd 0%, #fafafa 100%);
+    background: -o-linear-gradient(bottom, #dddddd, #fafafa);
+    filter: progid:dximagetransform.microsoft.gradient(startColorStr='#4d5b76', EndColorStr='#6c7a95');
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#fafafa',EndColorStr='#dddddd')";
+
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #a6a6a6;
+    border-left: 1px solid #a6a6a6;
+    border-right: 1px solid #a6a6a6;
+    outline: none;
+}
+.tool-text {
+    #position: relative;
+    #top: -50%
+}
+/* ########### Flowchart ########### */
+.flowchart .start-node {
+    position: absolute;
+    top: 10px;
+    left: 45%;
+    min-width: 2.5em;
+    height: 3em;
+    text-align: center;
+    line-height: 3em;
+    border: 1px solid darkgray;
+    padding: 5px;
+}
+.flowchart .collapsed {
+    padding: 10px 0px;
+    font-style: italic;
+}
+.flowchart .drop-zone {
+    position: relative;
+    height: 800px;
+    width: 800px;
+    overflow: scroll;
+}
+.flow-node {
+    border: 1px solid darkgray;
+    min-width:86px;
+    margin: 0 auto;
+}
+.flow-node .diamond {   /*test this across browsers*/
+    width: 0;
+    height: 0;
+    border: 1.2em solid transparent;
+    border-bottom-color: grey;
+    position: relative;
+    top: -1.2em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
+}
+.flow-node .diamond:after {
+    content: '';
+    position: absolute;
+    left: -1.2em;
+    top: 1.2em;
+    width: 0;
+    height: 0;
+    border: 1.2em solid transparent;
+    border-top-color: grey;
+}
+.flow-node .header {
+    height: 0px;
+}
+.flow-node .footer {
+    margin-top: 12px;
+}
+.node-flow-decision-overlay {
+    font-size: 0.7em;
+    z-index: 0;
+}
+.modal {
+    z-index:40001;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+.modal-overlay {
+    position:fixed;
+    top:0px;
+    left:0px;
+    width:100%;
+    height:100%;
+    background-color:black;
+    opacity:0.33; /* Sets opacity so it's partly transparent */
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=33)"; /* IE transparency */
+    filter:alpha(opacity=33); /* IE transparency */
+    z-index:40001;
+}
+.modal-dialog {
+    z-index:40002; /* ensures box appears above overlay */
+    width:300px;
+    position:relative;
+    top:200px;
+    margin:0 auto;
+    background-color:white;
+    border:1px solid black;
+}
+.modal-header {
+    padding: 0.4em 0em;
+    border-bottom: 1px solid black;
+    width:99%;
+}
+.modal-footer {
+    border-top: 1px solid black;
+    padding: 0.4em 0em;
+    width:100%;
+}
+.modal-body {
+    padding:1em 1em;
+}
+.modal-footer button {
+    float:right;
+    width:6em;
+    margin:0 0.2em;
+}
+.flow-node .small-diamonds-holder {
+    width: 3.8em;
+    margin-left: auto;
+    margin-right: auto;
+}
+.flow-node .small-diamond {   /*test this across browsers*/
+    float: left;
+    width: 0;
+    height: 0;
+    border: 0.6em solid transparent;
+    border-bottom-color: grey;
+    position: relative;
+    top: -0.6em;
+    margin-top: 1.4em;
+    margin-bottom: 1.4em;
+}
+.flow-node .small-diamond:after {
+    content: '';
+    position: absolute;
+    left: -0.6em;
+    top: 0.5em;
+    width: 0;
+    height: 0;
+    border: 0.6em solid transparent;
+    border-top-color: grey;
+}
+
+.clearfix:after {
+    content: ".";
+    display: block;
+    clear: both;
+    visibility: hidden;
+    line-height: 0;
+    height: 0;
+}
+.clearfix {
+    display: inline-block;
+}
+html[xmlns] .clearfix {
+    display: block;
+}
+* html .clearfix {
+    height: 1%;
+    overflow: visible;
+}

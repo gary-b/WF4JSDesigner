@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="utf-8">
+    <title>WF4 Designer</title>
+    <link rel="stylesheet" href="css/app.css"/>
+    <link rel="stylesheet" href="css/font-awesome-4.3.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <div ng-controller="wf">
+        <h1>Workflow Designer</h1> <button ng-click="loadExample()">Load example workflow.</button>
+
+        <div id="wfDesigner" wf-designer="data.workflow" arguments="data.arguments">
+        </div>
+     </div>
+
+    <!-- In production use:
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
+    -->
+    <script src="lib/jquery-1.11.1.js"></script>
+    <script src="lib/jquery-migrate-1.2.1.js"></script>
+    <script src="lib/jquery-ui.js"></script>
+    <script src="lib/dom.jsPlumb-1.6.2-min.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular/angular-route.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/services/contextMenu.js"></script>
+    <script src="js/services/environment.js"></script>
+    <script src="js/services/flowchartPlumb.js"></script>
+    <script src="js/services/renderWaiter.js"></script>
+    <script src="js/services/toolbox.js"></script>
+    <script src="js/services/wfDesignerUI.js"></script>
+    <script src="js/services/wfManipulator.js"></script>
+    <script src="js/services/wfModel.js"></script>
+    <script src="js/services/wfPartDefs.js"></script>
+    <script src="js/controllers/wf.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/directives/actBase.js"></script>
+    <script src="js/directives/actDropZone.js"></script>
+    <script src="js/directives/actFlowchart.js"></script>
+    <script src="js/directives/actSelector.js"></script>
+    <script src="js/directives/actSequence.js"></script>
+    <script src="js/directives/actWriteLine.js"></script>
+    <script src="js/directives/contextMenu.js"></script>
+    <script src="js/directives/flowNode.js"></script>
+    <script src="js/directives/flowSwitchCasePopup.js"></script>
+    <script src="js/directives/nodeFlowDecision.js"></script>
+    <script src="js/directives/nodeFlowSwitch.js"></script>
+    <script src="js/directives/nodeSelector.js"></script>
+    <script src="js/directives/propGridFlowchart.js"></script>
+    <script src="js/directives/propGridFlowDecision.js"></script>
+    <script src="js/directives/propGridFlowSwitch.js"></script>
+    <script src="js/directives/propGridFlowSwitchConnection.js"></script>
+    <script src="js/directives/propGridSequence.js"></script>
+    <script src="js/directives/propGridWriteLine.js"></script>
+    <script src="js/directives/propString.js"></script>
+    <script src="js/directives/propCheckBox.js"></script>
+    <script src="js/directives/tool.js"></script>
+    <script src="js/directives/wfArguments.js"></script>
+    <script src="js/directives/wfDesigner.js"></script>
+    <script src="js/directives/wfDesignSurface.js"></script>
+    <script src="js/directives/wfPropertyGrid.js"></script>
+    <script src="js/directives/wfToolbox.js"></script>
+    <script src="js/directives/wfVariables.js"></script>
+
+</body>
+</html>

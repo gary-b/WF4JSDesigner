@@ -1,0 +1,49 @@
+<div act-base="actFlowchart" expander="expander" class="flowchart" ng-dblclick="maximizer()">
+
+    <div ng-if="expanded" class="drop-zone">
+
+        <div class="start-node">
+
+            Start {{actFlowchart.nodes.length}}
+        </div>
+
+        <div ng-repeat="node in actFlowchart.nodes"
+             node-selector="node"
+             cant-expand="true"></div>
+        <div id="ConnectionsContextMenu" class="context-menu position-fixed hide">
+            <ul>
+                <li><a href ng-mousedown="mouseDown($event)" ng-click="deleteConnection()">Delete</a></li>
+            </ul>
+        </div>
+        <div ng-if="showFlowSwitchPopup" class="modal">
+            <div class="modal-overlay">
+                &nbsp;
+            </div>
+            <div class="modal-dialog">
+                <div class="modal-header">
+                    Select Type
+                </div>
+                <div class="modal-body">
+                    <label>
+                        FlowSwitch&lt;T&gt; <br/>
+                        T<br/>
+                        <select ng-model="flowSwitchT"
+                                ng-options="type for type in availableTypes"></select>
+                    </label>
+                </div>
+                <div class="modal-footer clearfix">
+                    <button type="button" ng-click="cancelCreateFlowSwitch()">Cancel</button>
+                    <button type="button" ng-click="createFlowSwitch(flowSwitchT)">OK</button>
+                </div>
+            </div>
+        </div>
+        <div flow-switch-case-popup></div>
+    </div>
+
+    <div ng-if="!expanded" class="collapsed">
+
+        Double click to maximize
+
+    </div>
+
+</div>

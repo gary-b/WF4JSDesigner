@@ -1,0 +1,31 @@
+<table class="pad">
+    <thead>
+        <tr>
+            <th>Name</th><th>Direction</th><th>Type</th><th>Default Value</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="argument in arguments">
+            <td>
+                <input type="text" ng-model="argument.name">
+            </td>
+            <td>
+                <select ng-model="argument.direction"
+                        ng-options="direction for direction in directions"></select>
+            </td>
+            <td>
+                <select ng-model="argument.type"
+                        ng-options="type for type in availableTypes"></select>
+            </td>
+            <td>
+                <input type="text" ng-model="argument.defaultValue">
+            </td>
+            <td class="delete-row">
+                <button type="button" ng-click="deleteArgument(argument)">X</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<div id="NewBar" ng-click="newArgument()">
+    Create Argument
+</div>

@@ -1,0 +1,17 @@
+<div class="flow-node"
+     ng-mousedown="select($event)"
+     ng-class="{ selected: isSelected() }"
+     context-menu="select($event)"
+     data-target="ActivityContextMenu">
+
+    <div class="header"></div>
+
+    <div ng-transclude></div>
+
+    <div class="footer">
+
+        <span>{{ flowNode.displayName || "&nbsp" }}</span>
+
+    </div>
+
+</div>
