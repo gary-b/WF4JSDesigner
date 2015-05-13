@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfArguments', function(environment, wfModel) {
+app.directive('wfArguments', function(dotNetEnvironment) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfArguments.html',
@@ -9,7 +9,7 @@ app.directive('wfArguments', function(environment, wfModel) {
         },
         link: function (scope, element, attrs, ctrl) {
 
-            scope.availableTypes = environment.types;
+            scope.availableTypes = dotNetEnvironment.types;
 
             scope.directions = [ 'In', 'Out', 'InOut', 'Property' ];
 

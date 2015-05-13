@@ -1,7 +1,7 @@
 'use strict';
 
 app.value('jsPlumb', jsPlumb)
-    .factory('flowchartPlumb', function (jsPlumb, renderWaiter, designerUI, $rootScope, wfPartDefs) {
+    .factory('flowchartPlumb', function (jsPlumb, renderWaiter, designerUI, $rootScope, wfPartDefinitions) {
         return {
             getPropGridDirective: function (type) {
                 switch(type) {
@@ -274,10 +274,10 @@ app.value('jsPlumb', jsPlumb)
                         })
                     },
                     insertPartToWfModel: function (category, wfPartType, relativePos, genericParams) {
-                        var displayPart = wfPartDefs.createModel(this.flowchart, wfPartType, genericParams);
+                        var displayPart = wfPartDefinitions.createModel(this.flowchart, wfPartType, genericParams);
                         var flowNode;
                         if (category === 'activity-tool') {
-                            flowNode = wfPartDefs.createModel(this.flowchart, "FlowStep");
+                            flowNode = wfPartDefinitions.createModel(this.flowchart, "FlowStep");
                             flowNode.action = displayPart;
                         } else if (category === 'flow-node-tool') {
                             flowNode = displayPart;

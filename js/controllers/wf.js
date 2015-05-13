@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-app.controller('wf', function($scope, wfModel) {
+app.controller('wf', function($scope, wfGraphManipulator) {
 
     function generateTestData() {
         return {
@@ -73,7 +73,7 @@ app.controller('wf', function($scope, wfModel) {
     $scope.loadExample = function() {
         var testData = generateTestData();
         //initialize model with methods / additional properties required by the designer
-        wfModel.initialize(testData.sequence, testData.arguments);
+        wfGraphManipulator.initialize(testData.sequence, testData.arguments);
         $scope.data = {
             workflow: testData.sequence,
             arguments: testData.arguments

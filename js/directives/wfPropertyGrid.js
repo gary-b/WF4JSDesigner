@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfPropertyGrid', function ($compile, designerUI, wfPartDefs, flowchartPlumb) {
+app.directive('wfPropertyGrid', function ($compile, designerUI, wfPartDefinitions, flowchartPlumb) {
     return {
         templateUrl: './js/templates/wfPropertyGrid.html',
         restrict: 'A',
@@ -15,7 +15,7 @@ app.directive('wfPropertyGrid', function ($compile, designerUI, wfPartDefs, flow
                 } else {
                     var dirName;
                     if (item.modelType === 'wfPart') {
-                        dirName = wfPartDefs.getPropGridDirective(item.type);
+                        dirName = wfPartDefinitions.getPropGridDirective(item.type);
                     } else if (item.modelType === 'flowchartPlumbConnection') {
                         dirName = flowchartPlumb.getPropGridDirective(item.type);
                     } else {

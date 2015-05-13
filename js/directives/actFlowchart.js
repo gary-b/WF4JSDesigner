@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, environment) {
+app.directive('actFlowchart', function (designerUI, flowchartPlumb, dotNetEnvironment) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/actFlowchart.html',
@@ -23,7 +23,7 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                 //wait for dom, initialize jsPlumb and create endpoint on start-node
                 if (scope.expanded) {
                     cntrl.flowchartInstance.initFlowchart(element, scope.actFlowchart, 'ConnectionsContextMenu');
-                    scope.availableTypes = environment.types;
+                    scope.availableTypes = dotNetEnvironment.types;
 
                     scope.deleteConnection = function() {
                         cntrl.flowchartInstance.deleteConnection();
