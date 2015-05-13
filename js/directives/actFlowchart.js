@@ -75,7 +75,9 @@ app.directive('actFlowchart', function (designerUI, wfPartDefs, flowchartPlumb, 
                         }
                     });
                     scope.$on('$destroy', function() {
-                        droppableArea.droppable('disable');
+                        if(droppableArea.hasClass('ui-droppable')) {
+                            droppableArea.droppable('disable');
+                        }
                     });
                 }
             };
