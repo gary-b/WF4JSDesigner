@@ -137,6 +137,9 @@ div.arrow-down {
 .hide {
     display:none;
 }
+.invisible {
+    visibility: hidden !important;
+}
 /* #############    Variables / Arguments Pads   ########## */
 
 .bottom-pad {
