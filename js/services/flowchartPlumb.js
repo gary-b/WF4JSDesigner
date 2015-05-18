@@ -1,7 +1,7 @@
 'use strict';
 
 app.value('jsPlumb', jsPlumb)
-    .factory('flowchartPlumb', function (jsPlumb, renderWaiter, designerUI, $rootScope, wfPartDefs) {
+    .factory('flowchartPlumb', function (jsPlumb, renderWaiter, designerUI, $rootScope, wfPartDefinitions) {
         return {
             getPropGridDirective: function (type) {
                 switch(type) {
@@ -21,10 +21,12 @@ app.value('jsPlumb', jsPlumb)
                 return {
                     jsPlumbInstance: null,
                     flowchart: null, //the single flowchart model this service will deal with
+                    flowchartElement: null,
                     nodeElements: [],  //keep track of nodes and associated dom element
                     connectorParams: {  //FIXME: look into jsPlumb.Defaults
                         connector: "Flowchart",
                         endpoint: "Rectangle",
+                        cssClass: 'invisible',
                         paintStyle: { width: 15, height: 11, strokeStyle: "lightgrey", fillStyle: 'lightgrey' },
                         connectorStyle: { lineWidth: 3, strokeStyle: "lightgrey", fillStyle: 'lightgrey' }
                     },
@@ -68,6 +70,7 @@ app.value('jsPlumb', jsPlumb)
                     },
                     initFlowchart: function (element, flowchartModel, conMenu) {
                         //wait for dom, initialize jsPlumb and create endpoint on start-node
+                        this.flowchartElement = element;
                         this.flowchart = flowchartModel;
                         var self = this;
                         renderWaiter.afterRender(function () {
@@ -165,10 +168,10 @@ app.value('jsPlumb', jsPlumb)
                             self.jsPlumbInstance = jsPlumb.getInstance();
                             self.jsPlumbInstance.setContainer($(element).find('.drop-zone'));
                             self.jsPlumbInstance.bind("connection", function (info, originalEvent) {
-                                info.connection.addOverlay([ "Arrow", { foldback:0.75, location:1, width:10, length:15 } ]);
+                                info.connection.addOverlay([ "Arrow", { foldback:1, location:1, width:10, length:12 } ]);
                             });
                             self.endpointAdded("FlowChart", "bottom", self.jsPlumbInstance.addEndpoint($(element).find('.start-node'), {
-                                anchor: [0.5, 1, 0, 1, 0, 4],
+                                anchor: [0.5, 1, 0, 1],
                                 isSource: true,
                                 parameters: {
                                     position: 'bottom'
@@ -177,6 +180,18 @@ app.value('jsPlumb', jsPlumb)
 
                             //create connections once jsPlumb has created endpoints
                             setTimeout(function() {
+                                var startNodeElement = self.flowchartElement.find('.start-node');
+                                new Perimeter({
+                                    monitor: startNodeElement[0].parentNode,
+                                    target: startNodeElement[0],
+                                    outline: 30,
+                                    onBreach: function () {
+                                        self.jsPlumbInstance.selectEndpoints({ element: startNodeElement }).removeClass('invisible');
+                                    },
+                                    onLeave: function () {
+                                        self.jsPlumbInstance.selectEndpoints({ element: startNodeElement }).addClass('invisible');
+                                    }
+                                });
                                 if (flowchartModel.startNode != null) {
                                     var con = flowchartModel.connections[0];
                                     self.jsPlumbInstance.connect({
@@ -251,7 +266,9 @@ app.value('jsPlumb', jsPlumb)
                                     originalEvent.stopPropagation();
                                     originalEvent.preventDefault();
                                     $rootScope.$apply(function () {
-                                        self.setConnectionAsSelectedItem(connection);
+                                        if(connection.source != null) {
+                                            self.setConnectionAsSelectedItem(connection);
+                                        }
                                         //weve stopped propagation of the click event - close context menu if open
                                         $rootScope.$emit('contextMenu:close');
                                     });
@@ -274,10 +291,10 @@ app.value('jsPlumb', jsPlumb)
                         })
                     },
                     insertPartToWfModel: function (category, wfPartType, relativePos, genericParams) {
-                        var displayPart = wfPartDefs.createModel(this.flowchart, wfPartType, genericParams);
+                        var displayPart = wfPartDefinitions.createModel(this.flowchart, wfPartType, genericParams);
                         var flowNode;
                         if (category === 'activity-tool') {
-                            flowNode = wfPartDefs.createModel(this.flowchart, "FlowStep");
+                            flowNode = wfPartDefinitions.createModel(this.flowchart, "FlowStep");
                             flowNode.action = displayPart;
                         } else if (category === 'flow-node-tool') {
                             flowNode = displayPart;
@@ -307,17 +324,41 @@ app.value('jsPlumb', jsPlumb)
                         }
                     },
                     initFlowNode: function (element, node, specificFlowNodeInitFn) {
-                        //wait for dom, set draggable and create endpoints
+                        //wait for dom, set perimeter, set draggable and create endpoints
                         element.data("flowchartPart", node); //adding node to DOM element
                         var self = this;
                         renderWaiter.afterRender(function () {
                             return $(element).find('.header');
                         }, function () {
+
+                            var perimeter = new Perimeter({
+                                monitor: self.flowchartElement.find('.start-node')[0].parentNode,
+                                target: element[0],
+                                outline: 30,
+                                onBreach: function () {
+                                    self.jsPlumbInstance.selectEndpoints({ element:element }).removeClass('invisible');
+                                    //self.jsPlumbInstance.selectEndpoints({ element: element }).setVisible(true, true, true);
+                                    /*self.jsPlumbInstance.selectEndpoints({ element: element }).each(function(endpoint) {
+                                        endpoint.setEndpoint('Dot');
+                                    });*/
+                                },
+                                onLeave: function () {
+                                    self.jsPlumbInstance.selectEndpoints({ element:element }).addClass('invisible');
+                                    //self.jsPlumbInstance.selectEndpoints({ element: element }).setVisible(false, true, true);
+                                    /*self.jsPlumbInstance.selectEndpoints({ element: element }).each(function(endpoint) {
+                                        endpoint.setEndpoint('Blank');
+                                    });*/
+                                }
+                            });
                             self.jsPlumbInstance.draggable($(element), {
                                 containment: true,
-                                stop: function (params) {
+                                start: function () {
+                                    perimeter.startTrackingPosition();
+                                },
+                                stop: function () {
                                     node.position.left = element.prop('offsetLeft');
                                     node.position.top = element.prop('offsetTop');
+                                    perimeter.stopTrackingPosition();
                                 }
                             });
                             specificFlowNodeInitFn();
@@ -372,7 +413,7 @@ app.value('jsPlumb', jsPlumb)
                             }, self.connectorParams));
                         }
                         this.addTargetEndpoints(element, node);
-                        addSourceEndpoint([1, 0.5, 1, 0, 6, 0]);
+                        addSourceEndpoint([1, 0.5, 1, 0]);
                     },
                     addFlowDecisionEndpoints: function(element, node) {
                         var self = this;
@@ -380,10 +421,10 @@ app.value('jsPlumb', jsPlumb)
                             var labelLoc, anchorPos;
                             if (pos === 'left') {
                                 labelLoc = [ 0, 1.5 ];
-                                anchorPos = [0, 0.5, -1, 0, -6, 0]; //x, y, x-direction, y-dir, x-offset, y-off;
+                                anchorPos = [0, 0.5, -1, 0]; //x, y, x-direction, y-dir, x-offset, y-off;
                             } else if (pos = 'right') {
                                 labelLoc = [ 1.1, 1.5 ];
-                                anchorPos = [1, 0.5, 1, 0, 6, 0];
+                                anchorPos = [1, 0.5, 1, 0];
                             } else {
                                 throw 'Invalid arg passed to addFlowDecisionEndpoints: pos must be right or left';
                             }
@@ -423,7 +464,7 @@ app.value('jsPlumb', jsPlumb)
                         var self = this;
                         this.addTargetEndpoints(element, node);
                         self.endpointAdded(node.nodeId, 'bottom', self.jsPlumbInstance.addEndpoint($(element), {
-                            anchor: [0.5, 1, 0, 1, 0, 5],
+                            anchor: [0.5, 1, 0, 1],
                             isSource: true,
                             parameters: {
                                 position: 'bottom'
@@ -433,7 +474,7 @@ app.value('jsPlumb', jsPlumb)
                     addTargetEndpoints: function(element, node) {
                         var self = this;
                         self.endpointAdded(node.nodeId, 'top', self.jsPlumbInstance.addEndpoint($(element), {
-                            anchor: [0.5, 0, 0, -1, 0, -6],
+                            anchor: [0.5, 0, 0, -1],
                             isTarget: true,
                             maxConnections: -1,
                             parameters: {

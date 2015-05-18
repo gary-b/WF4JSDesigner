@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfDesigner', function(wfManipulator, designerUI) {
+app.directive('wfDesigner', function(wfGraphManipulator, designerUI) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfDesigner.html',
@@ -16,9 +16,9 @@ app.directive('wfDesigner', function(wfManipulator, designerUI) {
                 }
                 if (designerUI.selectedItem === scope.wfDesigner) { //root of workflow
                     scope.wfDesigner = null;
-                    scope.arguments = null;
+                    scope.arguments = [];
                 } else {
-                    wfManipulator.deleteWfPart(designerUI.selectedItem);
+                    wfGraphManipulator.deleteWfPart(designerUI.selectedItem);
                 }
                 scope.$broadcast('wfPart:delete', designerUI.selectedItem);
                 designerUI.selectedItem = null;

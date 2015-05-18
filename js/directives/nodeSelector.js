@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('nodeSelector', function ($compile, wfPartDefs) {
+app.directive('nodeSelector', function ($compile, wfPartDefinitions) {
     return {
         restrict: 'A',
         require: '^actFlowchart',
@@ -17,13 +17,13 @@ app.directive('nodeSelector', function ($compile, wfPartDefs) {
                         //This also means we have to call the initialisation code (flowchartPlumb.initFlowStep)
                         //directly.
                         var activity = node.action;
-                        dir = wfPartDefs.getDirective(activity.type);
+                        dir = wfPartDefinitions.getDirective(activity.type);
                         element.attr(dir, attrs.nodeSelector + '.action');//FIXME: very hacky
                         cntrl.flowchartInstance.initFlowStep(element, node);
                         break;
                     case 'FlowDecision':
                     case 'FlowSwitch':
-                        dir = wfPartDefs.getDirective(node.type);
+                        dir = wfPartDefinitions.getDirective(node.type);
                         element.attr(dir, attrs.nodeSelector);
                         break;
                     default:

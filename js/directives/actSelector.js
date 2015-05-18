@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actSelector', function($compile, wfPartDefs, contextMenu) {
+app.directive('actSelector', function($compile, wfPartDefinitions) {
     return {
         restrict: 'A',
         scope:false,
@@ -24,7 +24,7 @@ app.directive('actSelector', function($compile, wfPartDefs, contextMenu) {
             }
             function selectDirective(activity) {
                 destroyLastDirective();
-                var newDirective = wfPartDefs.getDirective(activity.type);
+                var newDirective = wfPartDefinitions.getDirective(activity.type);
                 element.attr(newDirective, attrs.actSelector);
                 element.removeAttr('act-selector');
                 element.removeAttr('ng-repeat');

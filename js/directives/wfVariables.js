@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('wfVariables', function(environment, designerUI) {
+app.directive('wfVariables', function(dotNetEnvironment, designerUI) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/wfVariables.html',
@@ -42,7 +42,7 @@ app.directive('wfVariables', function(environment, designerUI) {
                 });
             };
             scope.getAvailableTypes = function () {
-                return environment.types;
+                return dotNetEnvironment.types;
             };
             function getPartsForVars() {
                 //must return closest part to scope.part first

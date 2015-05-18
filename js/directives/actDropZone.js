@@ -1,6 +1,6 @@
 'use strict';
 
-app.directive('actDropZone', function(wfPartDefs, wfManipulator, designerUI) {
+app.directive('actDropZone', function(wfPartDefinitions, wfGraphManipulator, designerUI) {
     return {
         restrict: 'A',
         templateUrl: './js/templates/actDropZone.html',
@@ -15,10 +15,10 @@ app.directive('actDropZone', function(wfPartDefs, wfManipulator, designerUI) {
             }
 
             function addActivity (activityType) {
-                var activity = wfPartDefs.createModel(scope.parent, activityType);
+                var activity = wfPartDefinitions.createModel(scope.parent, activityType);
 
                 if(scope.actDropZone instanceof Array) {
-                    wfManipulator.insertActivityAtPos(activity,
+                    wfGraphManipulator.insertActivityAtPos(activity,
                         scope.actDropZone,
                             scope.index+1);
                 } else {
